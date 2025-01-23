@@ -6,8 +6,9 @@ name = "pypi"
 [packages]
 django = "*"
 celery = "*"
-python-decouple = "*"
 djangorestframework = "*"
+psycopg2-binary = ">=2.9"
+python-decouple = "*"
 
 [dev-packages]
 
