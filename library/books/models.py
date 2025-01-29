@@ -11,8 +11,8 @@ class Category(models.Model):
 
 class Author(models.Model):
     name = models.CharField(max_length=255)
-    bio = models.TextField(blank=True, null=True)  # Optional
-    birth_date = models.DateField(blank=True, null=True)  # Optional
+    bio = models.TextField(blank=True, null=True) 
+    birth_date = models.DateField(blank=True, null=True) 
 
     def __str__(self):
         return self.name
@@ -31,8 +31,8 @@ class Book(models.Model):
         null=True, 
         related_name="books"
     )
-    isbn = models.CharField(max_length=13, unique=True)
-    publish_date = models.DateField()
+    isbn = models.CharField(max_length=13, null=True, blank=True, unique=True)
+    published_date = models.DateField()
     available = models.BooleanField(default=True)
 
     def __str__(self):
@@ -59,6 +59,7 @@ class RentalSchedule(models.Model):
             ("active", "Active"),
             ("overdue", "Overdue"),
             ("returned", "Returned"),
+            ("pending", "Pending"),
         ],
         default="active",
     )
@@ -74,7 +75,7 @@ class OverdueNotification(models.Model):
         related_name="notifications"
     )
     book = models.ForeignKey(
-        'Book', 
+        "Book", 
         on_delete=models.CASCADE, 
         related_name="notifications"
     )
@@ -97,18 +98,26 @@ class EventSchedule(models.Model):
 
 
 class ReservationSchedule(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservations")
-    book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name="reservations")
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="reservations"
+    )
+    book = models.ForeignKey(
+        "Book", 
+        on_delete=models.CASCADE, 
+        related_name="reservations"
+    )
     reservation_start_date = models.DateTimeField(auto_now_add=True)
     reservation_end_date = models.DateTimeField()
     status = models.CharField(
         max_length=20,
         choices=[
-            ('pending', 'Pending'),
-            ('confirmed', 'Confirmed'),
-            ('canceled', 'Canceled'),
+            ("pending", "Pending"),
+            ("confirmed", "Confirmed"),
+            ("canceled", "Canceled"),
         ],
-        default='pending',
+        default="pending",
     )
 
     def __str__(self):
