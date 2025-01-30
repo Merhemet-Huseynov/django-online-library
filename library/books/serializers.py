@@ -47,8 +47,13 @@ class BookSerializer(serializers.ModelSerializer):
             "isbn",
             "published_date",
             "available",
+            "sale_price",
+            "rental_price_3_days",
+            "rental_price_1_week",
+            "rental_price_1_month",
+            "allow_rental",
+            "book_count"
         ]
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -68,7 +73,11 @@ class UserSerializer(serializers.ModelSerializer):
 class RentalScheduleSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
-
+    
+    # Include rental duration choices
+    rental_duration = serializers.ChoiceField(choices=RentalSchedule.RENTAL_DURATIONS)
+    rental_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    
     class Meta:
         model = RentalSchedule
         fields = [
@@ -77,9 +86,23 @@ class RentalScheduleSerializer(serializers.ModelSerializer):
             "book", 
             "rental_start_date", 
             "rental_end_date", 
+            "rental_duration", 
+            "rental_price", 
             "returned", 
             "status"
         ]
+
+    def create(self, validated_data):
+        """Custom create method to automatically calculate rental_end_date and rental_price"""
+        rental_schedule = super().create(validated_data)
+        rental_schedule.save()
+        return rental_schedule
+
+    def update(self, instance, validated_data):
+        """Custom update method to ensure rental_end_date and rental_price are calculated on update"""
+        instance = super().update(instance, validated_data)
+        instance.save() 
+        return instance
 
 
 class OverdueNotificationSerializer(serializers.ModelSerializer):
