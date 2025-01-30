@@ -23,18 +23,26 @@ class Author(models.Model):
 class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="books")
-    
+
     title = models.CharField(max_length=255)
-    isbn = models.CharField(max_length=13, null=True, blank=True, unique=True)
+    isbn = models.CharField(max_length=15, null=True, blank=True, unique=True)
     published_date = models.DateField()
     available = models.BooleanField(default=True)
-
+ 
     allow_rental = models.BooleanField(default=False)
     book_count = models.PositiveIntegerField(default=1)
     available_count = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         return self.title
+
+    def average_rating(self):
+        """Calculates the average rating of all reviews of the book."""
+        reviews = self.reviews.all()
+        if reviews.exists():
+            total_rating = sum(review.rating for review in reviews)
+            return total_rating / reviews.count()
+        return 0
 
 
 class RentalPrice(models.Model):
@@ -217,3 +225,14 @@ class ReservationSchedule(models.Model):
 
     def __str__(self):
         return f"Reservation: {self.book.title} by {self.user.username}"
+
+
+class BookReview(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="book_reviews")
+    rating = models.PositiveIntegerField(choices=[(i, str(i)) for i in range(1, 6)]) 
+    review = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.user.username} for {self.book.title} - Rating: {self.rating}"
