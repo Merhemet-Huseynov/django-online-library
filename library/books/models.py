@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from django.utils.timezone import now
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -21,14 +22,14 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="books")
+    author = models.ForeignKey("Author", on_delete=models.CASCADE, related_name="books")
+    category = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True, related_name="books")
 
     title = models.CharField(max_length=255)
     isbn = models.CharField(max_length=15, null=True, blank=True, unique=True)
     published_date = models.DateField()
     available = models.BooleanField(default=True)
- 
+
     allow_rental = models.BooleanField(default=False)
     book_count = models.PositiveIntegerField(default=1)
     available_count = models.PositiveIntegerField(default=1)
@@ -85,12 +86,12 @@ class RentalSchedule(models.Model):
 
     def save(self, *args, **kwargs):
         """Automatically sets rental_end_date, rental_price, checks book availability."""
-        if self.book.available_count <= 0:
+        if not self.pk and self.book.available_count <= 0:  # Yeni obyekt yaradılarkən yoxla
             raise ValueError("The book is out of stock and cannot be rented.")
 
-        # Decrease available count for the rented book
-        self.book.available_count -= 1
-        self.book.save()
+        if not self.pk:  # Yalnız yeni obyekt yaradılarkən azalmalıdır
+            self.book.available_count -= 1
+            self.book.save()
 
         duration_mapping = {
             "3_days": timedelta(days=3),
@@ -106,6 +107,17 @@ class RentalSchedule(models.Model):
 
         super().save(*args, **kwargs)
 
+        # RentalHistory avtomatik yaradır
+        if self.status == "returned" and not RentalHistory.objects.filter(user=self.user, book=self.book, rental_start_date=self.rental_start_date).exists():
+            RentalHistory.objects.create(
+                user=self.user,
+                book=self.book,
+                rental_start_date=self.rental_start_date,
+                rental_end_date=self.rental_end_date,
+                rental_duration=self.rental_duration,
+                rental_price=self.rental_price
+            )
+
     def return_book(self):
         """Method to return the book and update the available count, including overdue fine calculation."""
         if self.returned:
@@ -115,17 +127,15 @@ class RentalSchedule(models.Model):
         self.book.available_count += 1
         self.book.save()
 
-        # Calculate overdue fine if the book is returned after the rental end date
-        if self.rental_end_date < self.rental_start_date:
-            overdue_days = (self.rental_start_date - self.rental_end_date).days
+        # Overdue calculation
+        today = now().date()
+        overdue_days = max((today - self.rental_end_date).days, 0)  
 
-            # We charge the penalty price set by the admin.
-            fine_amount = 0  
-            if self.rental.overdue_fine:
-                fine_amount = self.rental.overdue_fine.fine_amount or (overdue_days * 1) 
+        fine_amount = 0
+        if overdue_days > 0:
+            fine_amount = overdue_days * 1  
 
-            # Creating a new penalty
-            overdue_fine = OverdueFine.objects.create(
+            OverdueFine.objects.create(
                 rental=self,
                 overdue_days=overdue_days,
                 fine_amount=fine_amount
@@ -186,6 +196,15 @@ class SaleTransaction(models.Model):
 
         super().save(*args, **kwargs)
 
+        # PurchaseHistory avtomatik yaradır
+        if self.status == "completed" and not PurchaseHistory.objects.filter(user=self.user, book=self.book, purchase_date=self.sale_date).exists():
+            PurchaseHistory.objects.create(
+                user=self.user,
+                book=self.book,
+                purchase_date=self.sale_date,
+                sale_price=self.sale_price
+            )
+
     def __str__(self):
         return f"Sale: {self.book.title} - {self.user.username} - {self.sale_price} AZN"
 
@@ -214,12 +233,12 @@ class ReservationSchedule(models.Model):
 
     def save(self, *args, **kwargs):
         """Checks availability before reservation and updates available_count."""
-        if self.book.available_count <= 0:
+        if self.status == "confirmed" and self.book.available_count <= 0:
             raise ValueError("The book is out of stock and cannot be reserved.")
 
-        # Decrease available count for the reserved book
-        self.book.available_count -= 1
-        self.book.save()
+        if self.status == "confirmed" and not self.pk:  
+            self.book.available_count -= 1
+            self.book.save()
 
         super().save(*args, **kwargs)
 
@@ -236,3 +255,71 @@ class BookReview(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.book.title} - Rating: {self.rating}"
+
+
+class RentalHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rental_history")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="rental_history")
+    rental_start_date = models.DateField()
+    rental_end_date = models.DateField()
+    rental_duration = models.CharField(max_length=10, choices=RentalSchedule.RENTAL_DURATIONS)
+    rental_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Rental by {self.user.username} for {self.book.title} from {self.rental_start_date} to {self.rental_end_date}"
+
+
+class PurchaseHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="purchase_history")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="purchase_history")
+    purchase_date = models.DateField(auto_now_add=True)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Purchase by {self.user.username} for {self.book.title} on {self.purchase_date}"
+
+
+class UserPreferences(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="preferences")
+    favorite_categories = models.ManyToManyField("Category", related_name="preferred_by", blank=True)
+    favorite_authors = models.ManyToManyField("Author", related_name="preferred_by", blank=True)
+
+    def __str__(self):
+        return f"Preferences for {self.user.username}"
+
+
+class BookRecommendation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recommendations")
+    book = models.ForeignKey("Book", on_delete=models.CASCADE, related_name="recommendations")
+    recommended_on = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Recommendation for {self.user.username} - {self.book.title}"
+
+def generate_book_recommendations(user):
+    # We find the categories the user is interested in
+    preferences = user.preferences
+    preferred_categories = preferences.favorite_categories.all()
+    preferred_authors = preferences.favorite_authors.all()
+
+    # User"s most rated books
+    top_rated_books = Book.objects.filter(reviews__user=user).annotate(avg_rating=models.Avg("reviews__rating")).order_by("-avg_rating")[:5]
+
+    # Popular books
+    popular_books = Book.objects.all().order_by("-rental_count")[:5]  # rental_count özəlliyini əlavə et
+
+    # Similar authors
+    similar_author_books = Book.objects.filter(author__in=preferred_authors).exclude(id__in=[book.id for book in top_rated_books])
+
+    # Combining recommended books
+    recommended_books = set(top_rated_books) | set(popular_books) | set(similar_author_books)
+  
+    # Removing rented books
+    rented_books = RentalSchedule.objects.filter(user=user, returned=False).values_list("book", flat=True)
+    recommended_books = [book for book in recommended_books if book.id not in rented_books]
+
+    # Creating a recommendation list
+    for book in recommended_books:
+        BookRecommendation.objects.create(user=user, book=book)
+
+    return recommended_books
