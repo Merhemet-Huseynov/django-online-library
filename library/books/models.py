@@ -76,7 +76,7 @@ class RentalSchedule(models.Model):
     status = models.CharField(max_length=20, choices=RENTAL_STATUS, default="pending")
 
     def save(self, *args, **kwargs):
-        """Automatically sets rental_end_date, rental_price, and checks book availability."""
+        """Automatically sets rental_end_date, rental_price, checks book availability."""
         if self.book.available_count <= 0:
             raise ValueError("The book is out of stock and cannot be rented.")
 
@@ -99,13 +99,30 @@ class RentalSchedule(models.Model):
         super().save(*args, **kwargs)
 
     def return_book(self):
-        """Method to return the book and update the available count."""
+        """Method to return the book and update the available count, including overdue fine calculation."""
         if self.returned:
             raise ValueError("The book has already been returned.")
 
         self.returned = True
         self.book.available_count += 1
         self.book.save()
+
+        # Calculate overdue fine if the book is returned after the rental end date
+        if self.rental_end_date < self.rental_start_date:
+            overdue_days = (self.rental_start_date - self.rental_end_date).days
+
+            # We charge the penalty price set by the admin.
+            fine_amount = 0  
+            if self.rental.overdue_fine:
+                fine_amount = self.rental.overdue_fine.fine_amount or (overdue_days * 1) 
+
+            # Creating a new penalty
+            overdue_fine = OverdueFine.objects.create(
+                rental=self,
+                overdue_days=overdue_days,
+                fine_amount=fine_amount
+            )
+
         self.save()
 
     def __str__(self):
@@ -120,6 +137,15 @@ class OverdueNotification(models.Model):
 
     def __str__(self):
         return f"Overdue: {self.book.title} for {self.user.username}"
+
+
+class OverdueFine(models.Model):
+    rental = models.OneToOneField(RentalSchedule, on_delete=models.CASCADE, related_name="overdue_fine")
+    overdue_days = models.PositiveIntegerField(default=0)
+    fine_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f"Overdue Fine for {self.rental.book.title} ({self.overdue_days} days) - Fine: {self.fine_amount} AZN"
 
 
 class SalePrice(models.Model):
