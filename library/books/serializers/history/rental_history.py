@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from models import Book, RentalHistory
+from books.models.catalog import Book
+from books.models.history import RentalHistory
 
 class RentalHistorySerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(

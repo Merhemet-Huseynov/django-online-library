@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Author
+from books.models.catalog import Author
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:

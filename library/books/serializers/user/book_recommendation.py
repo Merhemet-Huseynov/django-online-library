@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from models import Book, BookRecommendation
+from books.models.catalog import Book
+from books.models.user import BookRecommendation
 
 class BookRecommendationSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(

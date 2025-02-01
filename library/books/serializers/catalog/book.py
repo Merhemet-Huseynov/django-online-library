@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Category, Author, Book
+from books.models.catalog import Category, Author, Book
 
 class BookSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(

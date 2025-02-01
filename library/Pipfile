@@ -4,11 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
 celery = "*"
-djangorestframework = "*"
 psycopg2-binary = ">=2.9"
 python-decouple = "*"
+django = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

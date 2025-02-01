@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from models import Category, Author, UserPreferences
-
+from books.models.catalog import Category, Author
+from books.models.user import UserPreferences
 
 class UserPreferencesSerializer(serializers.ModelSerializer):
     favorite_categories = serializers.StringRelatedField(many=True)

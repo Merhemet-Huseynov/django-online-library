@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from models import Book, SalePrice
+from books.models.catalog import Book
+from books.models.sale import SalePrice
 
 class SalePriceSerializer(serializers.ModelSerializer):
     book = serializers.PrimaryKeyRelatedField(

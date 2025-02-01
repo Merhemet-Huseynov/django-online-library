@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import RentalSchedule, OverdueFine
+from books.models.rental import RentalSchedule, OverdueFine
 
 class OverdueFineSerializer(serializers.ModelSerializer):
     rental = serializers.PrimaryKeyRelatedField(

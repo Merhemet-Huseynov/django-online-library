@@ -1,24 +1,38 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import (
-    BookViewSet, 
-    CategoryViewSet, 
-    AuthorViewSet,
-    RentalScheduleViewSet, 
-    OverdueNotificationViewSet,
-    EventScheduleViewSet,
-    ReservationScheduleViewSet
+from django.urls import path
+from .views import *
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
 )
 
-router = DefaultRouter()
-router.register(r"books", BookViewSet)
-router.register(r"categories", CategoryViewSet)
-router.register(r"authors", AuthorViewSet)
-router.register(r"rentals", RentalScheduleViewSet)
-router.register(r"overdue-notifications", OverdueNotificationViewSet)
-router.register(r"events", EventScheduleViewSet) 
-router.register(r"reservations", ReservationScheduleViewSet)
-
 urlpatterns = [
-    path("api/", include(router.urls)),
+    # JWT Authentication
+    path(
+        "token/", 
+        TokenObtainPairView.as_view(), 
+        name="token_obtain_pair"
+    ),
+    path(
+        "token/refresh/", 
+        TokenRefreshView.as_view(), 
+        name="token_refresh"
+    ),
+    path(
+        "token/verify/", 
+        TokenVerifyView.as_view(), 
+        name="token_verify"
+    ),
+
+    # Author endpoints
+    path(
+        "authors/",
+        AuthorListView.as_view(), 
+        name="author-list"
+    ),
+    path(
+        "authors/<int:pk>/",
+        AuthorDetailView.as_view(), 
+        name="author-detail"
+    ),
 ]

@@ -1,5 +1,6 @@
 from django.db import models
-from ..catalog.book import Book
+from ..catalog import Book
+from ..rental import RentalSchedule
 from django.contrib.auth.models import User
 
 class RentalHistory(models.Model):
