@@ -7,23 +7,17 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    # JWT Authentication
+    # Register endpoints
     path(
-        "token/", 
-        TokenObtainPairView.as_view(), 
-        name="token_obtain_pair"
+        "register/", 
+        RegisterView.as_view(), 
+        name="register"
     ),
     path(
-        "token/refresh/", 
-        TokenRefreshView.as_view(), 
-        name="token_refresh"
+        "verify-email/", 
+        VerifyEmailView.as_view(),
+        name="verify_email"
     ),
-    path(
-        "token/verify/", 
-        TokenVerifyView.as_view(), 
-        name="token_verify"
-    ),
-
     # Author endpoints
     path(
         "authors/",

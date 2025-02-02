@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4ea5d9678eba69f9d217b8a6679fedaff92cea12e8f14496affd0c2b0ef8f1c5"
+            "sha256": "d09606a85e6041afd88aed66bf8e032977b9ee71bb4f039e953505567d3ba39b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -96,6 +96,22 @@
             "index": "pypi",
             "markers": "python_version >= '3.10'",
             "version": "==5.1.5"
+        },
+        "django-appconf": {
+            "hashes": [
+                "sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993",
+                "sha256:cfe87ea827c4ee04b9a70fab90b86d704cb02f2981f89da8423cb0fabf88efbf"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==1.0.6"
+        },
+        "django-celery-email": {
+            "hashes": [
+                "sha256:0f72da39cb2ea83c69440566e87f27cd72f68f247f98ce99fb29889fcf329406",
+                "sha256:5546cbba80952cc3b8a0ffa4206ce90a4a996a7ffd1c385a2bdb65903ca18ece"
+            ],
+            "index": "pypi",
+            "version": "==3.0.0"
         },
         "djangorestframework": {
             "hashes": [
@@ -229,6 +245,15 @@
             ],
             "index": "pypi",
             "version": "==3.8"
+        },
+        "redis": {
+            "hashes": [
+                "sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f",
+                "sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==5.2.1"
         },
         "six": {
             "hashes": [

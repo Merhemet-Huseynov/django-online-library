@@ -6,3 +6,4 @@ from .reservation import ReservationSchedule
 from .review import BookReview
 from .history import RentalHistory, PurchaseHistory
 from .user import UserPreferences, BookRecommendation
+from .auth import VerificationCode

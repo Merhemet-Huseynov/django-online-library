@@ -114,6 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = config("CELERY_BROKER_URL")
 
 # Email Konfiqurasiyası
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

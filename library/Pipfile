@@ -10,6 +10,8 @@ python-decouple = "*"
 django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+redis = "*"
+django-celery-email = "*"
 
 [dev-packages]
 
