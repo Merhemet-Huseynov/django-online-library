@@ -1,2 +1,2 @@
-from .verify_email import *
+from .send_verification_code import *
 from .register import *

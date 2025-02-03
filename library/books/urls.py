@@ -9,15 +9,16 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     # Register endpoints
     path(
-        "register/", 
-        RegisterView.as_view(), 
-        name="register"
+        "send-verification-code/", 
+        SendVerificationCodeView.as_view(), 
+        name="send_verification_code"
     ),
     path(
-        "verify-email/", 
-        VerifyEmailView.as_view(),
-        name="verify_email"
+        "register/", 
+        RegisterView.as_view(),
+        name="register"
     ),
+    
     # Author endpoints
     path(
         "authors/",
