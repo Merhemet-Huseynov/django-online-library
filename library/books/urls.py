@@ -1,13 +1,8 @@
 from django.urls import path
 from .views import *
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
 
 urlpatterns = [
-    # Register endpoints
+    # Auth endpoints
     path(
         "send-verification-code/", 
         SendVerificationCodeView.as_view(), 
@@ -17,6 +12,16 @@ urlpatterns = [
         "register/", 
         RegisterView.as_view(),
         name="register"
+    ),
+    path(
+        "login/", 
+        LoginView.as_view(), 
+        name="login"
+    ),
+    path(
+        "logout/", 
+        LogoutView.as_view(), 
+        name="logout"
     ),
     
     # Author endpoints

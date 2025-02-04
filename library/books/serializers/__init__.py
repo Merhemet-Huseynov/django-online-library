@@ -6,4 +6,4 @@ from .reservation import ReservationScheduleSerializer
 from .review import BookReviewSerializer
 from .sale import SalePriceSerializer, SaleTransactionSerializer
 from .user import BookRecommendationSerializer, UserPreferencesSerializer, UserSerializer
-from .auth import SendVerificationCodeSerializer, RegisterSerializer
+from .auth import SendVerificationCodeSerializer, RegisterSerializer, LoginSerializer

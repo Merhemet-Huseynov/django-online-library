@@ -1,3 +1,4 @@
+import random
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from books.models.auth.email_verification import VerificationCode
@@ -31,10 +32,34 @@ class RegisterSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
-        validated_data["username"] = validated_data["email"]
         validated_data.pop("verification_code")
+        base_username = validated_data["first_name"]
+        username = base_username
+        counter = 1
+
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{random.randint(100, 999)}"
+
+        validated_data["username"] = username  
         user = User.objects.create_user(**validated_data)
+        
         VerificationCode.objects.filter(
             email=validated_data["email"]
         ).update(is_verified=True)
+
         return user
+
+
+
+
+
+
+
+    # def create(self, validated_data):
+    #     validated_data["username"] = validated_data["email"]
+    #     validated_data.pop("verification_code")
+    #     user = User.objects.create_user(**validated_data)
+    #     VerificationCode.objects.filter(
+    #         email=validated_data["email"]
+    #     ).update(is_verified=True)
+    #     return user
