@@ -36,5 +36,6 @@ from .auth import (
     RegisterSerializer, 
     LoginSerializer,
     ResetPasswordSerializer, 
-    ResetPasswordSendCodeSerializer
+    ResetPasswordSendCodeSerializer,
+    ChangePasswordSerializer
 )
