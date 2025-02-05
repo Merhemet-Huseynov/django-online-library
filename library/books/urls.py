@@ -23,6 +23,16 @@ urlpatterns = [
         LogoutView.as_view(), 
         name="logout"
     ),
+    path(
+        "reset-password-send-code/", 
+        ResetPasswordSendCodeView.as_view(), 
+        name="reset-password-send-code"
+    ),
+    path(
+        "reset-password/", 
+        ResetPasswordView.as_view(), 
+        name="reset-password"
+    ),
     
     # Author endpoints
     path(
