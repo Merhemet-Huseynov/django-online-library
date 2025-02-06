@@ -1,29 +1,29 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import AllowAny
-
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from django.shortcuts import get_object_or_404
 
 from books.models.catalog import Author
 from books.serializers.catalog import AuthorSerializer
 
-__all__ = ["AuthorListView", "AuthorDetailView"]
+__all__ = [
+    "AuthorListView", "AuthorCreateView",
+    "AuthorDetailView", "AuthorUpdateView",
+    "AuthorDeleteView"
+]
 
 class AuthorListView(APIView):
-    authentication_classes = [JWTAuthentication]
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [AllowAny()]
-        return [IsAuthenticated()]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         authors = Author.objects.all()
         serializer = AuthorSerializer(authors, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AuthorCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = AuthorSerializer(data=request.data)
@@ -34,30 +34,30 @@ class AuthorListView(APIView):
 
 
 class AuthorDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [AllowAny()]
-        return [IsAuthenticated()]
-
-    def get_object(self, pk):
-        return get_object_or_404(Author, pk=pk)
+    permission_classes = [AllowAny]
 
     def get(self, request, pk):
-        author = self.get_object(pk)
+        author = get_object_or_404(Author, pk=pk)
         serializer = AuthorSerializer(author)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AuthorUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
-        author = self.get_object(pk)
+        author = get_object_or_404(Author, pk=pk)
         serializer = AuthorSerializer(author, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AuthorDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def delete(self, request, pk):
-        author = self.get_object(pk)
+        author = get_object_or_404(Author, pk=pk)
         author.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

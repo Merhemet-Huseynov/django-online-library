@@ -1,53 +1,5 @@
-from django.urls import path
-from .views import *
+from django.urls import include, path
 
 urlpatterns = [
-    # Auth endpoints
-    path(
-        "send-verification-code/", 
-        SendVerificationCodeView.as_view(), 
-        name="send_verification_code"
-    ),
-    path(
-        "register/", 
-        RegisterView.as_view(),
-        name="register"
-    ),
-    path(
-        "login/", 
-        LoginView.as_view(), 
-        name="login"
-    ),
-    path(
-        "logout/", 
-        LogoutView.as_view(), 
-        name="logout"
-    ),
-    path(
-        "reset-password-send-code/", 
-        ResetPasswordSendCodeView.as_view(), 
-        name="reset-password-send-code"
-    ),
-    path(
-        "reset-password/", 
-        ResetPasswordView.as_view(), 
-        name="reset-password"
-    ),
-    path(
-        "change-password/",
-        ChangePasswordView.as_view(), 
-        name="change-password"
-    ),
-    
-    # Author endpoints
-    path(
-        "authors/",
-        AuthorListView.as_view(), 
-        name="author-list"
-    ),
-    path(
-        "authors/<int:pk>/",
-        AuthorDetailView.as_view(), 
-        name="author-detail"
-    ),
+    path("books/", include("books.urls")),
 ]
