@@ -8,5 +8,6 @@ class AuthorSerializer(serializers.ModelSerializer):
             "id", 
             "name", 
             "bio", 
-            "birth_date"
+            "birth_date",
+            "slug"
         ]
