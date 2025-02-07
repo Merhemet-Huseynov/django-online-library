@@ -1,19 +1,22 @@
+import random
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from books.models.auth.email_verification import VerificationCode
+from accounts.models.verification import VerificationCode
 
-class ResetPasswordSerializer(serializers.Serializer):
-    username = serializers.CharField()
+class RegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField()
     verification_code = serializers.CharField(min_length=6, max_length=6)
-    new_password = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=30)
+    password = serializers.CharField(write_only=True)   
 
     def validate(self, data):
-        username = data["username"]
+        email = data["email"]
         verification_code = data["verification_code"]
 
         try:
             record = VerificationCode.objects.get(
-                email=User.objects.get(username=username).email,
+                email=email, 
                 verification_code=verification_code
             )
         except VerificationCode.DoesNotExist:
@@ -29,17 +32,19 @@ class ResetPasswordSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
-        username = validated_data["username"]
-        new_password = validated_data["new_password"]
-        
-        # We find the user by username
-        user = User.objects.get(username=username)
-        user.set_password(new_password)
-        user.save()
+        validated_data.pop("verification_code")
+        base_username = validated_data["first_name"]
+        username = base_username
+        counter = 1
 
-        # Mark the verification code as used
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{random.randint(100, 999)}"
+
+        validated_data["username"] = username  
+        user = User.objects.create_user(**validated_data)
+        
         VerificationCode.objects.filter(
-            email=user.email
+            email=validated_data["email"]
         ).update(is_verified=True)
 
         return user

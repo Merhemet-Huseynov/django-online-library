@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from books.serializers.auth.send_verification_code import SendVerificationCodeSerializer
-from books.tasks import send_verification_email
+from accounts.serializers.verification import SendVerificationCodeSerializer
+from accounts.tasks import send_verification_email
 
 __all__ = ["SendVerificationCodeView"]
 

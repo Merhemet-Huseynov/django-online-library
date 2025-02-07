@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from books.serializers.auth import LoginSerializer
+from accounts.serializers.auth import LoginSerializer
 
 __all__ = ["LoginView"]
 

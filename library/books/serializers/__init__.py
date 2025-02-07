@@ -30,12 +30,3 @@ from .user import (
     UserPreferencesSerializer, 
     UserSerializer
 )
-
-from .auth import (
-    SendVerificationCodeSerializer, 
-    RegisterSerializer, 
-    LoginSerializer,
-    ResetPasswordSerializer, 
-    ResetPasswordSendCodeSerializer,
-    ChangePasswordSerializer
-)

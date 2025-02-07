@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from books.models.auth.email_verification import VerificationCode
-from books.utils.verification_code import generate_verification_code
+from accounts.models.verification import VerificationCode
+from utils.verification_code import generate_verification_code
 
 class SendVerificationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField()

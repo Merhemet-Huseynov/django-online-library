@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     
     # Apps 
     "books",
+    "accounts",
+    "notifications",
 ]
 
 MIDDLEWARE = [

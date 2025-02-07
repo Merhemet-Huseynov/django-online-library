@@ -1,5 +1,5 @@
 from django.db import models
-from books.utils.slug import custom_slugify
+from utils.slug import custom_slugify
 
 class Author(models.Model):
     name = models.CharField(max_length=255)

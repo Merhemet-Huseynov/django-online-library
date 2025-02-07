@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.core.mail import send_mail
-from books.models.auth.email_verification import VerificationCode
-from books.utils.verification_code import generate_verification_code
+from accounts.models.verification import VerificationCode
+from utils.verification_code import generate_verification_code
 from decouple import config
 
 @shared_task

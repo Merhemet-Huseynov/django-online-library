@@ -1,9 +1,7 @@
-# books/views/auth/reset_password.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from books.serializers.auth.reset_password import ResetPasswordSerializer
+from accounts.serializers.password import ResetPasswordSerializer
 
 __all__ = ["ResetPasswordView"]
 

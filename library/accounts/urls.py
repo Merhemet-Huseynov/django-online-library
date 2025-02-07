@@ -1,5 +1,5 @@
 from django.urls import include, path
 
 urlpatterns = [
-    path("", include("books.urls.author")),
+    path("accounts/", include("accounts.urls")),
 ]

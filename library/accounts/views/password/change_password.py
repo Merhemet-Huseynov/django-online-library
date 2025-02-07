@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from books.serializers.auth.change_password import ChangePasswordSerializer
+from accounts.serializers.password import ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated
 
 __all__ = ["ChangePasswordView"]

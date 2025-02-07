@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from books.models.auth.email_verification import VerificationCode
-from books.utils.verification_code import generate_verification_code
-from books.tasks import send_verification_email
+from accounts.models.verification import VerificationCode
+from utils.verification_code import generate_verification_code
+from accounts.tasks import send_verification_email
 
 class ResetPasswordSendCodeSerializer(serializers.Serializer):
     username = serializers.CharField()
