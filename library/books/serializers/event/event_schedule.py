@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from books.models.event import EventSchedule
 
+
 class EventScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventSchedule

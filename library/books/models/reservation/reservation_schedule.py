@@ -2,20 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 from ..catalog.book import Book
 
+
 class ReservationSchedule(models.Model):
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         related_name="reservations"
     )
-
     book = models.ForeignKey(
         Book, 
         on_delete=models.CASCADE, 
         related_name="reservations"
     )
 
-    reservation_start_date = models.DateTimeField(auto_now_add=True)
+    reservation_start_date = models.DateTimeField(
+        auto_now_add=True
+    )
     reservation_end_date = models.DateTimeField()
     status = models.CharField(
         max_length=20,
@@ -39,7 +41,8 @@ class ReservationSchedule(models.Model):
             # Notify waiting users if the book is no longer available
             if self.book.available_count <= 0:
                 users_waiting_for_book = ReservationSchedule.objects.filter(
-                    book=self.book, status="pending"
+                    book=self.book, 
+                    status="pending"
                 )
                 for user_reservation in users_waiting_for_book:
                     OverdueNotification.objects.create(

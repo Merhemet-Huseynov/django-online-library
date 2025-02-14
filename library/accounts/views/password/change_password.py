@@ -1,10 +1,10 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from accounts.serializers.password import ChangePasswordSerializer
+from rest_framework.views import APIView, Response, status
 from rest_framework.permissions import IsAuthenticated
 
+from accounts.serializers.password import ChangePasswordSerializer
+
 __all__ = ["ChangePasswordView"]
+
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
@@ -22,4 +22,7 @@ class ChangePasswordView(APIView):
             }, status=status.HTTP_200_OK
         )
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors, 
+            status=status.HTTP_400_BAD_REQUEST
+        )

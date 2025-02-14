@@ -1,11 +1,18 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+
 from accounts.models.verification import VerificationCode
+
 
 class ResetPasswordSerializer(serializers.Serializer):
     username = serializers.CharField()
-    verification_code = serializers.CharField(min_length=6, max_length=6)
-    new_password = serializers.CharField(write_only=True)
+    verification_code = serializers.CharField(
+        min_length=6, 
+        max_length=6
+    )
+    new_password = serializers.CharField(
+        write_only=True
+    )
 
     def validate(self, data):
         username = data["username"]

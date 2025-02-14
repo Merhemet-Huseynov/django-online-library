@@ -3,10 +3,17 @@ from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
+
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True)
-    confirm_password = serializers.CharField(write_only=True)
+    old_password = serializers.CharField(
+        write_only=True
+    )
+    new_password = serializers.CharField(
+        write_only=True
+    )
+    confirm_password = serializers.CharField(
+        write_only=True
+    )
 
     def validate(self, data):
         user = self.context["request"].user 

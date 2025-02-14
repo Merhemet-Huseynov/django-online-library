@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from .celery import Celery
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
@@ -38,14 +39,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
+    # Third-party
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     
     # Apps 
-    "books",
     "accounts",
     "notifications",
+    "books",
 ]
 
 MIDDLEWARE = [
@@ -114,10 +116,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Celery
-CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_BACKEND = config("CELERY_BROKER_URL")
+CELERY_BROKER_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = config("REDIS_URL", default="redis://localhost:6379/0")
+
 
 # Email Konfiqurasiyası
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

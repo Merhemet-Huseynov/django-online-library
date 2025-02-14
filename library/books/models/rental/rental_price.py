@@ -1,6 +1,7 @@
 from django.db import models
 from ..catalog.book import Book
 
+
 class RentalPrice(models.Model):
     RENTAL_DURATIONS = [
         ("3_days", "3 Days"),
@@ -14,8 +15,14 @@ class RentalPrice(models.Model):
         related_name="rental_prices"
     )
 
-    duration = models.CharField(max_length=10, choices=RENTAL_DURATIONS)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.CharField(
+        max_length=10, 
+        choices=RENTAL_DURATIONS
+    )
+    price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2
+    )
 
     def __str__(self):
         return (

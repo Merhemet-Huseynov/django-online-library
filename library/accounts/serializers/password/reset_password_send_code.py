@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from accounts.models.verification import VerificationCode
-from utils.verification_code import generate_verification_code
-from accounts.tasks import send_verification_email
+
+from services.auth import reset_password_send_code
+
 
 class ResetPasswordSendCodeSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -19,15 +19,4 @@ class ResetPasswordSendCodeSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-        email = self.user.email  
-        VerificationCode.objects.filter(email=email).delete()
-        verification_code = generate_verification_code(email)
-
-        VerificationCode.objects.create(
-            email=email, 
-            verification_code=verification_code
-        )
-
-        send_verification_email.delay(email)
-
-        return {"email": email, "message": "Verification code sent."}
+        return reset_password_send_code(self.user.email)

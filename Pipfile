@@ -6,12 +6,12 @@ name = "pypi"
 [packages]
 celery = "*"
 psycopg2-binary = ">=2.9"
-python-decouple = "*"
 django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 redis = "*"
 django-celery-email = "*"
+python-decouple = "*"
 
 [dev-packages]
 

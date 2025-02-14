@@ -1,8 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import User
-from ..catalog.book import Book
-from datetime import timedelta
 from django.utils.timezone import now
+from datetime import timedelta
+from django.db import models
+from ..catalog.book import Book
+
 
 class RentalSchedule(models.Model):
     RENTAL_DURATIONS = [
@@ -10,7 +11,6 @@ class RentalSchedule(models.Model):
         ("1_week", "1 Week"),
         ("1_month", "1 Month"),
     ]
-
     RENTAL_STATUS = [
         ("pending", "Pending"),
         ("active", "Active"),
@@ -23,14 +23,18 @@ class RentalSchedule(models.Model):
         on_delete=models.CASCADE, 
         related_name="rentals"
     )
-
     book = models.ForeignKey(
         Book, 
         on_delete=models.CASCADE, 
         related_name="rentals"
     )
-    rental_start_date = models.DateField(auto_now_add=True)
-    rental_end_date = models.DateField(editable=False)
+
+    rental_start_date = models.DateField(
+        auto_now_add=True
+    )
+    rental_end_date = models.DateField(
+        editable=False
+    )
     rental_duration = models.CharField(
         max_length=10, 
         choices=RENTAL_DURATIONS, 
@@ -43,7 +47,9 @@ class RentalSchedule(models.Model):
         blank=True
     )
 
-    returned = models.BooleanField(default=False)
+    returned = models.BooleanField(
+        default=False
+    )
     status = models.CharField(
         max_length=20, 
         choices=RENTAL_STATUS, 
@@ -51,9 +57,14 @@ class RentalSchedule(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        """Automatically sets rental_end_date, rental_price, checks book availability."""
+        """
+        Automatically sets rental_end_date, rental_price, 
+        checks book availability.
+        """
         if not self.pk and self.book.available_count <= 0:  
-            raise ValueError("The book is out of stock and cannot be rented.")
+            raise ValueError(
+                "The book is out of stock and cannot be rented."
+            )
         
         if not self.pk: 
             self.book.available_count -= 1

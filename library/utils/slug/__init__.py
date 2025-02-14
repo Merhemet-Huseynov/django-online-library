@@ -1,1 +1,1 @@
-from .slug import custom_slugify
+from .slug import *

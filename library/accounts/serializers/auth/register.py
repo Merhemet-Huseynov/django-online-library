@@ -1,46 +1,53 @@
-import random
 from rest_framework import serializers
 from django.contrib.auth.models import User
+
 from accounts.models.verification import VerificationCode
+from services.auth import (
+    validate_verification_code, 
+    generate_unique_username
+)
+
 
 class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    verification_code = serializers.CharField(min_length=6, max_length=6)
-    first_name = serializers.CharField(max_length=30)
-    last_name = serializers.CharField(max_length=30)
-    password = serializers.CharField(write_only=True)   
+    verification_code = serializers.CharField(
+        min_length=6, 
+        max_length=6
+    )
+    first_name = serializers.CharField(
+        max_length=30
+    )
+    last_name = serializers.CharField(
+        max_length=30
+    )
+    password = serializers.CharField(
+        write_only=True
+    )   
 
     def validate(self, data):
-        email = data["email"]
-        verification_code = data["verification_code"]
-
         try:
-            record = VerificationCode.objects.get(
-                email=email, 
-                verification_code=verification_code
+            validate_verification_code(
+                data["email"], 
+                data["verification_code"]
             )
-        except VerificationCode.DoesNotExist:
+        except ValueError as e:
             raise serializers.ValidationError(
-                {"verification_code": "Invalid or expired verification code."}
-            )
-
-        if record.is_verified or record.is_expired():
-            raise serializers.ValidationError(
-                {"verification_code": "Verification code is invalid or expired."}
+                {"verification_code": str(e)}
             )
 
         return data
 
     def create(self, validated_data):
         validated_data.pop("verification_code")
-        base_username = validated_data["first_name"]
-        username = base_username
-        counter = 1
+        try:
+            validated_data["username"] = generate_unique_username(
+                validated_data["first_name"]
+            )
+        except ValueError as e:
+            raise serializers.ValidationError(
+                {"username": str(e)}
+            )
 
-        while User.objects.filter(username=username).exists():
-            username = f"{base_username}{random.randint(100, 999)}"
-
-        validated_data["username"] = username  
         user = User.objects.create_user(**validated_data)
         
         VerificationCode.objects.filter(

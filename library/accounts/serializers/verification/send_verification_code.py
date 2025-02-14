@@ -1,6 +1,8 @@
 from rest_framework import serializers
+
 from accounts.models.verification import VerificationCode
-from utils.verification_code import generate_verification_code
+from services.auth import create_verification_code
+
 
 class SendVerificationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -11,5 +13,5 @@ class SendVerificationCodeSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         email = validated_data["email"]
-        verification_code = generate_verification_code(email)
+        verification_code = create_verification_code(email)
         return {"email": email, "message": "Verification code sent."}

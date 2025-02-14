@@ -1,6 +1,7 @@
 from django.db import models
 from .rental_schedule import RentalSchedule
 
+
 class OverdueFine(models.Model):
     rental = models.OneToOneField(
         RentalSchedule, 
@@ -8,7 +9,9 @@ class OverdueFine(models.Model):
         related_name="overdue_fine"
     )
 
-    overdue_days = models.PositiveIntegerField(default=0)
+    overdue_days = models.PositiveIntegerField(
+        default=0
+    )
     fine_amount = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 

@@ -1,8 +1,6 @@
 from django.contrib import admin
 from ..models import (
     Book,
-    Category,
-    Author,
     EventSchedule,
     PurchaseHistory,
     RentalHistory,
@@ -20,7 +18,6 @@ from ..models import (
 
 # Register your models here.
 admin.site.register(Book)
-admin.site.register(Author)
 admin.site.register(EventSchedule)
 admin.site.register(PurchaseHistory)
 admin.site.register(RentalHistory)
@@ -34,9 +31,3 @@ admin.site.register(SalePrice)
 admin.site.register(SaleTransaction)
 admin.site.register(BookRecommendation)
 admin.site.register(UserPreferences)
-
-
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "parent")
-
-admin.site.register(Category, CategoryAdmin)

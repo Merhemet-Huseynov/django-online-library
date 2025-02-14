@@ -3,13 +3,13 @@ from books.views import *
 
 urlpatterns = [
     path(
-        "categories/", 
-        CategoryListView.as_view(), 
-        name="category-list"
-    ), 
-    path(
-        "categories/<int:parent_id>/subcategories/", 
-        SubCategoryListView.as_view(), 
-        name="subcategory-list"
+        "categories/list",
+        CategoryListViews.as_view(),
+        name="categories-list"
     ),
+    path(
+        "categories/detail/<str:identifier>/",
+        CategoryDetailViews.as_view(),
+        name="categories/detail/"
+    )    
 ]

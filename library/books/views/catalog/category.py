@@ -1,26 +1,33 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView, Response, status
+from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+
+from books.serializers.catalog import CategorySerializer
 from books.models.catalog import Category
-from books.serializers.catalog.category import CategorySerializer
 
-__all__ = ["CategoryListView", "SubCategoryListView"]
+__all__ = [
+    "CategoryListViews",
+    "CategoryDetailViews"
+]
 
-class CategoryListView(APIView):
-    def get(self, request):
-        categories = Category.objects.filter(parent__isnull=True)
-        serializer = CategorySerializer(categories, many=True)
+
+class CategoryListViews(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        category = Category.objects.all()
+        serializer = CategorySerializer(category, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class SubCategoryListView(APIView):
-    def get(self, request, parent_id):
-        try:
-            parent_category = Category.objects.get(id=parent_id)
-            subcategories = Category.objects.filter(parent=parent_category)
-            serializer = CategorySerializer(subcategories, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Category.DoesNotExist:
-            return Response({
-                "error": "Parent category not found"
-                }, status=status.HTTP_404_NOT_FOUND
-            )
+
+class CategoryDetailViews(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, identifier, *args, **kwargs):
+        if identifier.isdigit():
+            category = get_object_or_404(Category, id=identifier)
+        else:
+            category = get_object_or_404(Category, slug=identifier)
+        
+        serializer = CategorySerializer(category)
+        return Response(serializer.data, status=status.HTTP_200_OK)

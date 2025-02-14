@@ -3,13 +3,13 @@ from ..catalog import Book
 from ..rental import RentalSchedule
 from django.contrib.auth.models import User
 
+
 class RentalHistory(models.Model):
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE,
         related_name="rental_history"
     )
-
     book = models.ForeignKey(
         Book, 
         on_delete=models.CASCADE, 
@@ -22,7 +22,10 @@ class RentalHistory(models.Model):
         max_length=10, 
         choices=RentalSchedule.RENTAL_DURATIONS
     )
-    rental_price = models.DecimalField(max_digits=10, decimal_places=2)
+    rental_price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2
+    )
 
     def __str__(self):
         return (

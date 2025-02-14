@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from books.models.catalog import Book
 from books.models.rental import OverdueNotification
 
+
 class OverdueNotificationSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all()

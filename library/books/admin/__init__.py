@@ -1,7 +1,5 @@
 from .admin import (
     Book,
-    Category,
-    Author,
     EventSchedule,
     PurchaseHistory,
     RentalHistory,
@@ -16,3 +14,6 @@ from .admin import (
     BookRecommendation,
     UserPreferences
 )
+
+from .category import CategoryAdmin
+from .author import AuthorAdmin
