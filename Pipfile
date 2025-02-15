@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 redis = "*"
 django-celery-email = "*"
 python-decouple = "*"
+pytest-django = "*"
 
 [dev-packages]
 
