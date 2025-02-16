@@ -54,11 +54,17 @@ class Category(models.Model):
         
         if self.order is None:
             self.order = self.get_next_order()
+
+        # If this is a subcategory, make sure it has a super category
+        if self.super_category and not self.super_category.is_active:
+            raise ValueError("Super category must be active to create subcategory.")
         
         super().save(*args, **kwargs)
 
     def get_next_order(self):
         """Returns the next order value for the super category"""
+        if not self.super_category:
+            return 1 
         
         last_order = Category.objects.filter(
             super_category=self.super_category
@@ -74,3 +80,17 @@ class Category(models.Model):
     @property
     def is_subcategory(self) -> bool:
         return self.super_category is not None
+
+    def create_subcategory(self, name: str) -> "Category":
+        """Create a subcategory under this category."""
+        subcategory = Category.objects.create(
+            name=name,
+            super_category=self
+        )
+        return subcategory
+
+    @classmethod
+    def create_super_category(cls, name: str) -> "Category":
+        """Create a super category with no subcategories initially."""
+        super_category = cls.objects.create(name=name)
+        return super_category

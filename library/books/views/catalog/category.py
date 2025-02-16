@@ -15,8 +15,9 @@ class CategoryListViews(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
-        category = Category.objects.all()
-        serializer = CategorySerializer(category, many=True)
+        """Retrieve a list of all categories."""
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -24,6 +25,8 @@ class CategoryDetailViews(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, identifier, *args, **kwargs):
+        """Retrieve a single category by ID or slug."""
+        # Try to retrieve category by ID or slug
         if identifier.isdigit():
             category = get_object_or_404(Category, id=identifier)
         else:

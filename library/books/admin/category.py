@@ -5,20 +5,20 @@ from ..models import Category
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
-        "name", 
-        "super_category",
-        "order", 
+        "get_subcategory",  
+        "get_super_category_name", 
+        "order",
         "is_active"
     )
     list_filter = (
-        "is_active", 
+        "is_active",
         "super_category"
     )
     search_fields = (
         "name",
     )
     ordering = (
-        "super_category", 
+        "super_category",
         "order"
     )
     prepopulated_fields = {
@@ -29,8 +29,12 @@ class CategoryAdmin(admin.ModelAdmin):
         "deactivate_categories"
     ]
 
+    def get_subcategory(self, obj):
+        return obj.name if obj.super_category else "-"
+    get_subcategory.short_description = "Subcategory"
+    
     def get_super_category_name(self, obj):
-        return obj.get_super_category_name() or "No Super Category"
+        return obj.super_category.name if obj.super_category else obj.name
     get_super_category_name.short_description = "Super Category"
 
     def activate_categories(self, request, queryset):
@@ -46,6 +50,15 @@ class CategoryAdmin(admin.ModelAdmin):
     get_order_display.short_description = "Order"
 
     def save_model(self, request, obj, form, change):
-        if obj.order is None:  
-            obj.order = obj.get_next_order()
+        if obj.order is None:
+            obj.order = obj.get_next_order() 
         super().save_model(request, obj, form, change)
+
+    class SubCategoryInline(admin.TabularInline):
+        model = Category
+        fk_name = "super_category"
+        extra = 1
+        verbose_name = "Sub Category"
+        verbose_name_plural = "Sub Categories"
+
+    inlines = [SubCategoryInline]

@@ -84,13 +84,20 @@ WSGI_APPLICATION = "library.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+POSTGRES_HOST = "my-postgres" if config(
+    "DOCKERIZED", 
+    default="False"
+) == "True" else "localhost"
+
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "PASSWORD": config("POSTGRES_PASSWORD"),
-        "HOST": config("POSTGRES_HOST"),
+        "HOST": POSTGRES_HOST,
         "PORT": config("POSTGRES_PORT"),
     }
 }

@@ -1,32 +1,37 @@
 from rest_framework import serializers
 from books.models.catalog import Category
 
-
 class CategorySerializer(serializers.ModelSerializer):
-    super_category_name = serializers.SerializerMethodField()
-    is_subcategory = serializers.BooleanField(
-        read_only=True
+    # Təyin edilmiş super kateqoriya və onun adı (əgər varsa)
+    super_category_name = serializers.CharField(
+        source='get_super_category_name', read_only=True
     )
-
+    
     class Meta:
         model = Category
-        fields = [
-            "id",
-            "name",
-            "icon",
-            "order",
-            "is_active",
-            "slug",
-            "super_category",
-            "super_category_name",
-            "is_subcategory"
-        ]
-        read_only_fields = [
-            "slug", 
-            "order", 
-            "super_category_name",
-            "is_subcategory"
-        ]
+        fields = (
+            'id', 
+            'name', 
+            'slug', 
+            'icon', 
+            'order', 
+            'is_active', 
+            'super_category', 
+            'super_category_name'
+        )
 
-    def get_super_category_name(self, obj):
-        return obj.get_super_category_name()
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = (
+            'id', 
+            'name', 
+            'slug', 
+            'icon', 
+            'order', 
+            'is_active', 
+            'super_category'
+        )
+        extra_kwargs = {
+            'super_category': {'required': True}  # Sub kateqoriyalar üçün super kateqoriya tələb olunur
+        }
