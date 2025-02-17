@@ -6,7 +6,7 @@ __all__ = ["reset_password_send_code"]
 
 
 def reset_password_send_code(email):
-    verification_code = generate_verification_code(email)
+    verification_code = generate_verification_code()
     
     VerificationCode.objects.create(
         email=email, 

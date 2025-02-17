@@ -1,11 +1,17 @@
 import pytest
 from books.models.catalog import Author
 from books.serializers.catalog import AuthorSerializer
+from rest_framework import serializers
 
 
 @pytest.mark.django_db
-def test_author_serializer_serialization():
-    """AuthorSerializer should serialize the model object correctly."""
+def test_author_serializer_serialization() -> None:
+    """
+    Test the serialization of the Author model using the AuthorSerializer.
+
+    Ensures that an Author object is correctly serialized to a dictionary 
+    with the expected fields and values.
+    """
     author = Author.objects.create(
         name="Test Author",
         bio="Some biography",
@@ -13,8 +19,9 @@ def test_author_serializer_serialization():
         slug="test-author"
     )
 
-    serializer = AuthorSerializer(author)
-    expected_data = {
+    serializer: AuthorSerializer = AuthorSerializer(author)
+    
+    expected_data: dict = {
         "id": author.id,
         "name": "Test Author",
         "bio": "Some biography",
@@ -26,18 +33,23 @@ def test_author_serializer_serialization():
 
 
 @pytest.mark.django_db
-def test_author_serializer_deserialization():
-    """AuthorSerializer should create an Author object from JSON data."""
-    data = {
+def test_author_serializer_deserialization() -> None:
+    """
+    Test the deserialization of data into the Author model.
+
+    Ensures that valid JSON data can be used to create an Author object 
+    and that the created object contains the expected attributes.
+    """
+    data: dict = {
         "name": "New Author",
         "bio": "New author bio",
         "birth_date": "1985-05-15",
         "slug": "new-author"
     }
 
-    serializer = AuthorSerializer(data=data)
+    serializer: AuthorSerializer = AuthorSerializer(data=data)
     assert serializer.is_valid()
-    author = serializer.save()
+    author: Author = serializer.save()
 
     assert author.name == "New Author"
     assert author.bio == "New author bio"
@@ -46,15 +58,20 @@ def test_author_serializer_deserialization():
 
 
 @pytest.mark.django_db
-def test_author_serializer_validation():
-    """AuthorSerializer should fail for an empty name."""
-    data = {
+def test_author_serializer_validation() -> None:
+    """
+    Test the validation of the AuthorSerializer.
+
+    Ensures that the serializer fails validation when required fields, 
+    such as the name, are missing or empty.
+    """
+    data: dict = {
         "name": "",
         "bio": "Test Bio",
         "birth_date": "1995-03-20",
         "slug": "invalid-author"
     }
 
-    serializer = AuthorSerializer(data=data)
+    serializer: AuthorSerializer = AuthorSerializer(data=data)
     assert not serializer.is_valid()
     assert "name" in serializer.errors

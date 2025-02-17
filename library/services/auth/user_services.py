@@ -46,5 +46,6 @@ def generate_unique_username(base_username):
             suggested_usernames.append(new_username)
 
     raise ValueError(
-        f"Username '{base_username}' is already taken. Try one of these: {', '.join(suggested_usernames)}"
+        f"Username \"{base_username}\" is already taken.",
+        f"Try one of these: {', '.join(suggested_usernames)}"
     )
