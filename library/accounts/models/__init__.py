@@ -1,1 +1,1 @@
-from .verification import VerificationCode
+from .verification import VerificationCode, DailyMessage

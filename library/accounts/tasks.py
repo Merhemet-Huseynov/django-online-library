@@ -18,6 +18,5 @@ def send_verification_email(email):
         [email],
         fail_silently=False,
     )
- 
-    return f"Verification email sent successfully to {email}"
 
+    return f"Verification email sent successfully to {email}"

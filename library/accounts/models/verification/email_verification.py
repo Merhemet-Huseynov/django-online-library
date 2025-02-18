@@ -24,4 +24,4 @@ class VerificationCode(models.Model):
         return f"Verification code for {self.email}"
     
     def is_expired(self):
-        return (now() - self.created_at).seconds > 180
+        return (now() - self.created_at).total_seconds() > 180

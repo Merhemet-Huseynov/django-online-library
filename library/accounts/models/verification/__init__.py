@@ -1,1 +1,2 @@
 from .email_verification import VerificationCode
+from .daily_messages import DailyMessage
