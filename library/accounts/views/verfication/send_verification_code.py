@@ -13,10 +13,11 @@ class SendVerificationCodeView(APIView):
 
         if serializer.is_valid():
             email = serializer.validated_data["email"]
+            message_response = DailyMessage.send_message(email)
 
-            if not DailyMessage.send_message(email):
+            if message_response != "Message sent successfully!":
                 return Response(
-                    {"error": "Daily message limit reached."},
+                    {"error": message_response},
                     status=status.HTTP_429_TOO_MANY_REQUESTS
                 )
 

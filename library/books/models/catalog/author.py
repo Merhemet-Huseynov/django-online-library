@@ -1,5 +1,5 @@
 from django.db import models
-from services.slug import generate_unique_slug
+from utils.slug import generate_unique_slug
 
 
 class Author(models.Model):

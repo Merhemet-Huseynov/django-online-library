@@ -1,6 +1,6 @@
 from django.contrib import admin
 from ..models import Author
-from services.slug import generate_unique_slug
+from utils.slug import generate_unique_slug
 
 
 @admin.register(Author)
