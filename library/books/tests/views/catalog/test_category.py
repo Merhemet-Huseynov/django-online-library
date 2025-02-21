@@ -42,7 +42,7 @@ def test_category_list_view(client: APIClient) -> None:
     Asserts:
         The response status code is 200 OK and the response data is a list.
     """
-    response: Response = client.get("/api/books/categories/list")
+    response: Response = client.get("/api/books/categories/list/")
 
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.data, list)

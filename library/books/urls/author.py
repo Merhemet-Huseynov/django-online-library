@@ -8,6 +8,7 @@ urlpatterns = [
         AuthorListViews.as_view(), 
         name="author-list"
     ),
+    
     path(
         "authors/<str:identifier>/", 
         AuthorDetailViews.as_view(), 

@@ -1,6 +1,6 @@
 import pytest
 from books.models.catalog import Author
-from services.slug import generate_unique_slug
+from utils.slug import generate_unique_slug
 
 
 @pytest.mark.django_db
