@@ -15,7 +15,7 @@ class DailyMessageLimit(models.Model):
 
     def __str__(self):
         return (
-            f"Daily Limit: {self.limit}" 
-            f"Expiration Time: {self.expiration_time}" 
+            f"Daily Limit: {self.limit} "
+            f"Expiration Time: {self.expiration_time} "
             f"Reset Time: {self.reset_time}"
         )

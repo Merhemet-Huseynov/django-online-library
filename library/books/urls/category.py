@@ -5,13 +5,13 @@ urlpatterns = [
     # Category endpoints
     path(
         "categories/list/",
-        CategoryListView.as_view(),
+        CategoryListViews.as_view(),
         name="categories-list"
     ),
 
     path(
         "categories/detail/<str:identifier>/",
-        CategoryDetailView.as_view(),
+        CategoryDetailViews.as_view(),
         name="categories-detail"
     ),
 

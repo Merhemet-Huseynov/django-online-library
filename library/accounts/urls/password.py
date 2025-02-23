@@ -8,11 +8,13 @@ urlpatterns = [
         ResetPasswordSendCodeView.as_view(), 
         name="reset-password-send-code"
     ),
+
     path(
         "reset-password/", 
         ResetPasswordView.as_view(), 
         name="reset-password"
     ),
+    
     path(
         "change-password/",
         ChangePasswordView.as_view(), 

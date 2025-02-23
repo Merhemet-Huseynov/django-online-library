@@ -13,6 +13,7 @@ redis = "*"
 django-celery-email = "*"
 python-decouple = "*"
 pytest-django = "*"
+pytest-mock = "*"
 
 [dev-packages]
 
