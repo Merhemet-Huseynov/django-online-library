@@ -1,8 +1,11 @@
 import logging
 from rest_framework.views import APIView, Response, status
+from drf_yasg.utils import swagger_auto_schema
+
 from accounts.serializers.verification import SendVerificationCodeSerializer
 from accounts.models.verification import DailyMessage
 from accounts.tasks import send_verification_email
+
 
 __all__ = ["SendVerificationCodeView"]
 
@@ -10,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class SendVerificationCodeView(APIView):
+
+    @swagger_auto_schema(request_body=SendVerificationCodeSerializer)
     def post(self, request):
         logger.info(
             "Send verification code request received for email: %s", 

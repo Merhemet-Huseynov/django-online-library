@@ -1,7 +1,13 @@
-from .auth import RegisterSerializer, LoginSerializer
-from .verification import SendVerificationCodeSerializer
+from .verification import (
+    SendVerificationCodeSerializer
+)
 from .password import (
     ResetPasswordSerializer, 
     ResetPasswordSendCodeSerializer,
     ChangePasswordSerializer
+)
+from .auth import (
+    RegisterSerializer, 
+    LoginSerializer, 
+    LogoutSerializer
 )

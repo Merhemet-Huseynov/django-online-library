@@ -1,5 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
+from drf_yasg.utils import swagger_auto_schema
+
 from accounts.serializers.password import ResetPasswordSendCodeSerializer
 
 __all__ = ["ResetPasswordSendCodeView"]
@@ -8,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class ResetPasswordSendCodeView(APIView):
+
+    @swagger_auto_schema(request_body=ResetPasswordSendCodeSerializer)
     def post(self, request):
         logger.info(
             "Password reset request received for email: %s", 

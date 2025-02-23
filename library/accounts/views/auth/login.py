@@ -1,5 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
+from drf_yasg.utils import swagger_auto_schema
+
 from accounts.serializers.auth import LoginSerializer
 
 __all__ = ["LoginView"]
@@ -8,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class LoginView(APIView):
+
+    @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
         logger.info("Login request received")  
 

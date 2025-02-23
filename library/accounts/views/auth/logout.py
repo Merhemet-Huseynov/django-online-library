@@ -2,6 +2,9 @@ import logging
 from rest_framework.views import APIView, Response, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from drf_yasg.utils import swagger_auto_schema
+
+from accounts.serializers.auth import LogoutSerializer
 
 __all__ = ["LogoutView"]
 
@@ -9,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class LogoutView(APIView):
+
+    @swagger_auto_schema(request_body=LogoutSerializer)
     def post(self, request):
         logger.info("Logout request received")
         

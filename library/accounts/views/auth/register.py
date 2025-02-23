@@ -1,7 +1,10 @@
 import logging
 from rest_framework.views import APIView, Response, status
 from django.contrib.auth.models import User
+from drf_yasg.utils import swagger_auto_schema
+
 from accounts.serializers.auth import RegisterSerializer
+
 
 __all__ = ["RegisterView"]
 
@@ -9,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class RegisterView(APIView):
+
+    @swagger_auto_schema(request_body=RegisterSerializer)
     def post(self, request):
         logger.info("Registration request received with data: %s", request.data)  
 
