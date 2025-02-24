@@ -7,7 +7,16 @@ from services.auth.email_service import create_verification_code
 
 
 @shared_task
-def send_verification_email(email):
+def send_verification_email(email: str) -> str:
+    """
+    Sends a verification email with a generated verification code to the given email address.
+
+    Args:
+        email (str): The email address to which the verification code will be sent.
+
+    Returns:
+        str: A success message indicating that the email has been sent.
+    """
     verification_code = create_verification_code(email)
     sender_email = config("EMAIL_HOST_USER")
 

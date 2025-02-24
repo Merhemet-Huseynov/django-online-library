@@ -11,10 +11,30 @@ logger = logging.getLogger(__name__)
 
 
 class ChangePasswordView(APIView):
+    """
+    View for handling password change requests. The user must be authenticated to 
+    access this endpoint.
+
+    Methods:
+        post: Accepts a POST request to change the user"s password. Validates and 
+        updates the password.
+    """
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(request_body=ChangePasswordSerializer)
-    def post(self, request):
+    def post(self, request) -> Response:
+        """
+        Handles the password change request for the authenticated user. If the 
+        request is valid,
+        the password is updated and a success message is returned. If invalid, 
+        errors are returned.
+
+        Args:
+            request: The request object containing the current and new password.
+
+        Returns:
+            Response: A response with a message indicating success or failure.
+        """
         logger.info(
             "Password change request received for user: %s", 
             request.user.email

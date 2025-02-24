@@ -3,6 +3,11 @@ from utils.slug import generate_unique_slug
 
 
 class Category(models.Model):
+    """
+    Represents a category which can be a main category or a subcategory.
+    Includes information such as name, icon, order, and whether it"s active.
+    Allows creation of subcategories under a main category.
+    """
     name = models.CharField(
         "Name", 
         max_length=255,  
@@ -44,11 +49,26 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Returns the name of the category.
+        
+        Returns:
+            str: The name of the category.
+        """
         return self.name
 
-    def save(self, *args, **kwargs):
-        """The slug is set and the order value is automatically determined."""
+    def save(self, *args, **kwargs) -> None:
+        """
+        Sets the slug and order value, and ensures subcategories have active super categories.
+        
+        If the category is a subcategory, its super category must be active.
+        If the order is not set, it is automatically calculated.
+        
+        Args:
+            *args: Positional arguments passed to the parent class"s save method.
+            **kwargs: Keyword arguments passed to the parent class"s save method.
+        """
         if not self.slug:
             self.slug = generate_unique_slug(self.name, Category)
         
@@ -61,8 +81,15 @@ class Category(models.Model):
         
         super().save(*args, **kwargs)
 
-    def get_next_order(self):
-        """Returns the next order value for the super category"""
+    def get_next_order(self) -> int:
+        """
+        Returns the next order value for the super category.
+        
+        If there is no super category, the first category gets order 1.
+        
+        Returns:
+            int: The next order value for this category.
+        """
         if not self.super_category:
             return 1 
         
@@ -73,16 +100,36 @@ class Category(models.Model):
         return (last_order or 0) + 1
 
     def get_super_category_name(self) -> str | None:
+        """
+        Returns the name of the super category or None if no super category exists.
+        
+        Returns:
+            str | None: The name of the super category or None if not applicable.
+        """
         if self.super_category is not None:
             return self.super_category.name
         return None
 
     @property
     def is_subcategory(self) -> bool:
+        """
+        Returns True if the category is a subcategory, False otherwise.
+        
+        Returns:
+            bool: True if the category has a super category, False otherwise.
+        """
         return self.super_category is not None
 
     def create_subcategory(self, name: str) -> "Category":
-        """Create a subcategory under this category."""
+        """
+        Creates a subcategory under this category and returns the created subcategory.
+        
+        Args:
+            name (str): The name of the new subcategory.
+        
+        Returns:
+            Category: The created subcategory.
+        """
         subcategory = Category.objects.create(
             name=name,
             super_category=self
@@ -91,6 +138,14 @@ class Category(models.Model):
 
     @classmethod
     def create_super_category(cls, name: str) -> "Category":
-        """Create a super category with no subcategories initially."""
+        """
+        Creates a super category with no subcategories initially and returns it.
+        
+        Args:
+            name (str): The name of the super category.
+        
+        Returns:
+            Category: The created super category.
+        """
         super_category = cls.objects.create(name=name)
         return super_category

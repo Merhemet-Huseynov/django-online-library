@@ -10,9 +10,21 @@ logger = logging.getLogger(__name__)
 
 
 class ResetPasswordSendCodeView(APIView):
+    """
+    View to handle password reset requests by sending a reset code to the user's email.
+    """
 
     @swagger_auto_schema(request_body=ResetPasswordSendCodeSerializer)
-    def post(self, request):
+    def post(self, request) -> Response:
+        """
+        Handle POST request to send a password reset code to the provided email.
+
+        Args:
+            request (Request): The request object containing the email for password reset.
+
+        Returns:
+            Response: A Response object containing the result of the password reset request.
+        """
         logger.info(
             "Password reset request received for email: %s", 
             request.data.get("email")

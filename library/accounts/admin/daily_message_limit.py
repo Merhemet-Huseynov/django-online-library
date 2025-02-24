@@ -5,6 +5,11 @@ from ..models import DailyMessageLimit
 
 @admin.register(DailyMessageLimit)
 class DailyMessageLimitAdmin(admin.ModelAdmin):
+    """
+    Admin interface for managing DailyMessageLimit model.
+    Allows setting a daily message limit and reset times.
+    """
+    
     list_display = (
         "limit", 
         "get_expiration_time", 
@@ -31,15 +36,42 @@ class DailyMessageLimitAdmin(admin.ModelAdmin):
         }),
     )
 
-    def get_expiration_time(self, obj):
+    def get_expiration_time(self, obj: DailyMessageLimit) -> str:
+        """
+        Retrieves and formats the expiration time for the daily message limit.
+
+        Args:
+            obj (DailyMessageLimit): The model instance.
+
+        Returns:
+            str: Formatted expiration time as a string.
+        """
         return self.format_duration(obj.expiration_time)
     get_expiration_time.short_description = "Code Expiration Date"
 
-    def get_reset_time(self, obj):
+    def get_reset_time(self, obj: DailyMessageLimit) -> str:
+        """
+        Retrieves and formats the reset time for the daily message limit.
+
+        Args:
+            obj (DailyMessageLimit): The model instance.
+
+        Returns:
+            str: Formatted reset time as a string.
+        """
         return self.format_duration(obj.reset_time)
     get_reset_time.short_description = "Limit Reset Period"
 
-    def format_duration(self, duration):
+    def format_duration(self, duration: timedelta) -> str:
+        """
+        Converts a timedelta object into a human-readable string.
+
+        Args:
+            duration (timedelta): The duration to format.
+
+        Returns:
+            str: A human-readable string representing the duration.
+        """
         total_seconds = int(duration.total_seconds())
         days, remainder = divmod(total_seconds, 86400)
         hours, remainder = divmod(remainder, 3600)

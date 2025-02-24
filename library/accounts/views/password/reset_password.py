@@ -10,9 +10,26 @@ logger = logging.getLogger(__name__)
 
 
 class ResetPasswordView(APIView):
-
+    """
+    API view to handle password reset requests.
+    
+    This view accepts a POST request with a request body containing
+    the data for password reset. If the data is valid, it performs
+    the reset and returns a success message. Otherwise, it returns
+    the validation errors.
+    """
+    
     @swagger_auto_schema(request_body=ResetPasswordSerializer)
-    def post(self, request):
+    def post(self, request) -> Response:
+        """
+        Handle the POST request to reset the password.
+        
+        Args:
+            request (Request): The incoming HTTP request containing the password reset data.
+        
+        Returns:
+            Response: A response indicating whether the password reset was successful or not.
+        """
         logger.info("Password reset request received")  
 
         serializer = ResetPasswordSerializer(data=request.data)

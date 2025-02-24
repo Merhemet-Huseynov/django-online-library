@@ -6,7 +6,8 @@ __all__ = ["generate_unique_slug"]
 
 logger = logging.getLogger(__name__)
 
-def generate_unique_slug(base_name, model_class):
+
+def generate_unique_slug(base_name: str, model_class: type[models.Model]) -> str:
     """
     Provides a unique slug generation based on the given model class.
 

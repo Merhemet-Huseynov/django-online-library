@@ -1,12 +1,13 @@
 import re
 import logging
+from typing import Dict
 
 __all__ = ["convert_to_slug"]
 
-
 logger = logging.getLogger(__name__)
 
-AZERBAIJANI_TO_LATIN = {
+
+AZERBAIJANI_TO_LATIN: Dict[str, str] = {
     "ş": "s",
     "ə": "e", 
     "ı": "i", 
@@ -23,7 +24,23 @@ AZERBAIJANI_TO_LATIN = {
     "Ü": "U"
 }
 
-def convert_to_slug(text):
+def convert_to_slug(text: str) -> str:
+    """
+    Converts Azerbaijani text to a URL-friendly slug.
+
+    Steps:
+    1. Replace Azerbaijani-specific characters with their Latin equivalents.
+    2. Convert the text to lowercase.
+    3. Replace non-alphanumeric characters (except "-") with "-".
+    4. Ensure that multiple dashes are replaced with a single dash.
+    5. Trim leading and trailing dashes.
+
+    Args:
+        text (str): The input text to convert.
+
+    Returns:
+        str: The generated slug.
+    """
     logger.info(f"Converting text to slug: {text}")
 
     for az_letter, lat_letter in AZERBAIJANI_TO_LATIN.items():

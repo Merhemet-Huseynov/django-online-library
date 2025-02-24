@@ -4,12 +4,27 @@ from django.contrib.auth import authenticate
 
 
 class LoginSerializer(serializers.Serializer):
+    """
+    Serializer for user login to authenticate and generate JWT tokens.
+    """
     username = serializers.CharField()
     password = serializers.CharField(
         write_only=True
     )
 
-    def validate(self, data):
+    def validate(self, data: dict) -> dict:
+        """
+        Validates the provided username and password and generates JWT tokens.
+
+        Args:
+            data (dict): The validated data containing "username" and "password".
+
+        Returns:
+            dict: A dictionary containing "refresh" and "access" tokens.
+
+        Raises:
+            serializers.ValidationError: If the username or password is invalid.
+        """
         username = data.get("username")
         password = data.get("password")
 
@@ -24,7 +39,7 @@ class LoginSerializer(serializers.Serializer):
                 "Invalid username or password."
             )
 
-        # We generate and return JWT tokens
+        # Generate and return JWT tokens
         refresh = RefreshToken.for_user(user)
         return {
             "refresh": str(refresh),
@@ -33,4 +48,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 class LogoutSerializer(serializers.Serializer):
+    """
+    Serializer for user logout to handle the refresh token.
+    """
     refresh = serializers.CharField()

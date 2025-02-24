@@ -9,6 +9,12 @@ from services.auth import (
 
 
 class RegisterSerializer(serializers.Serializer):
+    """
+    Serializer for registering a new user.
+    
+    This serializer validates and processes user registration data,
+    including email verification and username generation.
+    """
     email = serializers.EmailField()
     verification_code = serializers.CharField(
         min_length=6, 
@@ -24,7 +30,19 @@ class RegisterSerializer(serializers.Serializer):
         write_only=True
     )   
 
-    def validate(self, data):
+    def validate(self, data: dict) -> dict:
+        """
+        Validates the registration data by checking the verification code.
+
+        Args:
+            data (dict): The validated data for the registration process.
+
+        Raises:
+            serializers.ValidationError: If verification code is invalid or expired.
+
+        Returns:
+            dict: The validated data.
+        """
         try:
             validate_verification_code(
                 data["email"], 
@@ -37,7 +55,19 @@ class RegisterSerializer(serializers.Serializer):
 
         return data
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> User:
+        """
+        Creates a new user instance with the validated data.
+
+        Args:
+            validated_data (dict): The validated registration data.
+
+        Raises:
+            serializers.ValidationError: If there is an error in generating the username.
+
+        Returns:
+            User: The newly created user instance.
+        """
         validated_data.pop("verification_code")
         try:
             validated_data["username"] = generate_unique_username(

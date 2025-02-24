@@ -13,12 +13,29 @@ logger = logging.getLogger(__name__)
 
 
 class SendVerificationCodeView(APIView):
+    """
+    View for handling the sending of verification codes via email.
+
+    This view receives a POST request with an email address and sends a verification code
+    to that email. It also ensures the number of requests is limited based on the daily
+    message sending constraints.
+    """
 
     @swagger_auto_schema(request_body=SendVerificationCodeSerializer)
-    def post(self, request):
+    def post(self, request) -> Response:
+        """
+        Handle POST request to send a verification code to the provided email address.
+
+        Args:
+            request (Request): The request object containing the email.
+
+        Returns:
+            Response: The response containing a success or error message.
+        """
         logger.info(
             "Send verification code request received for email: %s", 
-            request.data.get("email")) 
+            request.data.get("email")
+        ) 
 
         serializer = SendVerificationCodeSerializer(data=request.data)
 

@@ -19,10 +19,23 @@ logger = logging.getLogger(__name__)
 
 
 class CategoryListViews(APIView):
+    """
+    View to retrieve a list of all categories.
+    
+    Allows any user to access the list of categories.
+    """
     permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        """Retrieve a list of all categories."""
+    def get(self, request, *args, **kwargs) -> Response:
+        """
+        Retrieve a list of all categories.
+        
+        Args:
+            request: The HTTP request object.
+        
+        Returns:
+            Response: A Response object containing the serialized category data and status code.
+        """
         logger.info("Fetching all categories.")
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
@@ -31,10 +44,24 @@ class CategoryListViews(APIView):
 
 
 class CategoryDetailViews(APIView):
+    """
+    View to retrieve a single category by ID or slug.
+    
+    Allows any user to access a specific category by its ID or slug.
+    """
     permission_classes = [AllowAny]
 
-    def get(self, request, identifier, *args, **kwargs):
-        """Retrieve a single category by ID or slug."""
+    def get(self, request, identifier: str, *args, **kwargs) -> Response:
+        """
+        Retrieve a single category by ID or slug.
+        
+        Args:
+            request: The HTTP request object.
+            identifier: The category ID or slug.
+        
+        Returns:
+            Response: A Response object containing the serialized category data and status code.
+        """
         logger.info(f"Fetching category with identifier: {identifier}")
         
         if identifier.isdigit():
@@ -48,11 +75,23 @@ class CategoryDetailViews(APIView):
 
 
 class SubCategoryListView(APIView):
+    """
+    View to find a super category by ID or slug and return its subcategories.
+    
+    Allows any user to access the subcategories of a specific super category.
+    """
     permission_classes = [AllowAny]
 
-    def get(self, request, super_category_name, *args, **kwargs):
+    def get(self, request, super_category_name: str, *args, **kwargs) -> Response:
         """
         Finds a super category by ID or slug and returns its subcategories.
+        
+        Args:
+            request: The HTTP request object.
+            super_category_name: The super category ID or slug.
+        
+        Returns:
+            Response: A Response object containing the serialized subcategory data and status code.
         """
         if not super_category_name:
             logger.warning("No super category name or ID provided.")

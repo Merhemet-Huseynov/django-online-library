@@ -5,6 +5,11 @@ from django.contrib.auth import authenticate
 
 
 class ChangePasswordSerializer(serializers.Serializer):
+    """
+    Serializer to handle the password change process, including validating
+    the old password, ensuring the new password matches the confirmation, 
+    and updating the user"s password.
+    """
     old_password = serializers.CharField(
         write_only=True
     )
@@ -15,7 +20,22 @@ class ChangePasswordSerializer(serializers.Serializer):
         write_only=True
     )
 
-    def validate(self, data):
+    def validate(self, data: dict) -> dict:
+        """
+        Validates the password change request, checking if the old password
+        is correct and if the new password matches the confirmation password.
+
+        Args:
+            data (dict): Dictionary containing old_password, new_password, 
+                         and confirm_password.
+
+        Raises:
+            ValidationError: If the old password is incorrect or the new 
+                             password doesn"t match the confirmation.
+
+        Returns:
+            dict: Validated data for password change.
+        """
         user = self.context["request"].user 
         old_password = data.get("old_password")
         new_password = data.get("new_password")
@@ -35,7 +55,16 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         return data
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> User:
+        """
+        Creates and saves the new password for the user.
+
+        Args:
+            validated_data (dict): Dictionary containing the new password.
+
+        Returns:
+            User: The updated user instance after changing the password.
+        """
         user = self.context["request"].user
         user.set_password(validated_data["new_password"])
         user.save()

@@ -5,6 +5,10 @@ from accounts.models.verification import VerificationCode
 
 
 class ResetPasswordSerializer(serializers.Serializer):
+    """
+    Serializer for handling the password reset process.
+    Validates the username, verification code, and new password.
+    """
     username = serializers.CharField()
     verification_code = serializers.CharField(
         min_length=6, 
@@ -14,7 +18,20 @@ class ResetPasswordSerializer(serializers.Serializer):
         write_only=True
     )
 
-    def validate(self, data):
+    def validate(self, data: dict) -> dict:
+        """
+        Validate the provided data to ensure the verification code is correct
+        and not expired.
+        
+        Args:
+            data (dict): The input data containing username, verification_code, and new_password.
+        
+        Returns:
+            dict: The validated data if everything is correct.
+        
+        Raises:
+            serializers.ValidationError: If the verification code is invalid or expired.
+        """
         username = data["username"]
         verification_code = data["verification_code"]
 
@@ -35,7 +52,16 @@ class ResetPasswordSerializer(serializers.Serializer):
 
         return data
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> User:
+        """
+        Create a new password for the user after validation.
+        
+        Args:
+            validated_data (dict): The validated data containing username and new password.
+        
+        Returns:
+            User: The updated user object with the new password set.
+        """
         username = validated_data["username"]
         new_password = validated_data["new_password"]
         

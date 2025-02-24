@@ -12,9 +12,26 @@ logger = logging.getLogger(__name__)
 
 
 class LogoutView(APIView):
+    """
+    API view that handles user logout by blacklisting the provided refresh token.
+    The refresh token is required for logging out the user and will be 
+    invalidated upon successful logout.
+
+    Methods:
+        post: Logs the user out by blacklisting the provided refresh token.
+    """
 
     @swagger_auto_schema(request_body=LogoutSerializer)
-    def post(self, request):
+    def post(self, request) -> Response:
+        """
+        Handles the POST request to log the user out by blacklisting the refresh token.
+
+        Args:
+            request (Request): The HTTP request object containing the refresh token.
+
+        Returns:
+            Response: The response indicating the result of the logout operation.
+        """
         logger.info("Logout request received")
         
         refresh_token = request.data.get("refresh")

@@ -7,6 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 def generate_verification_code() -> str:
-    code = str(random.randint(100000, 999999))
+    """
+    Generate a 6-digit random verification code.
+    
+    Returns:
+        str: A randomly generated 6-digit verification code as a string.
+    """
+    code: str = str(random.randint(100000, 999999))
     logger.info(f"Generated verification code: {code}")
     return code
