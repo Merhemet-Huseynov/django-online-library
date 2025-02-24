@@ -23,11 +23,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+# Swagger configuration
 schema_view = get_schema_view(
     openapi.Info(
         title="Online Library API",
         default_version="v1",
-        description="Test description",
+        description="This is the API documentation for Online Library.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@myapi.com"),
         license=openapi.License(name="BSD License"),
@@ -42,30 +43,32 @@ urlpatterns = [
         "admin/", 
         admin.site.urls
     ),
-
+    
     path(
-        "swagger/", 
-        schema_view.with_ui("swagger", cache_timeout=0), 
-        name="swagger-ui"
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="swagger-ui",
     ),
-
+    
     path(
-        "redoc/", 
-        schema_view.with_ui("redoc", cache_timeout=0), 
-        name="redoc-ui"
+        "redoc/",
+        schema_view.with_ui("redoc", cache_timeout=0),
+        name="redoc-ui",
     ),
-
+    
     path(
         "api/v1/books/", 
         include("books.urls")
     ),
-
+    
     path(
         "api/v1/accounts/", 
         include("accounts.urls")
     ),
 ]
 
+
+# For media files
 urlpatterns += static(
     settings.MEDIA_URL, 
     document_root=settings.MEDIA_ROOT

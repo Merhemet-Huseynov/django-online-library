@@ -14,8 +14,8 @@ django-celery-email = "*"
 python-decouple = "*"
 pytest-django = "*"
 pytest-mock = "*"
-drf-yasg = "*"
 pillow = "*"
+drf-yasg = "*"
 
 [dev-packages]
 

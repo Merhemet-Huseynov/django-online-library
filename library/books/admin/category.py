@@ -1,7 +1,8 @@
 from django.utils.html import format_html
 from django.contrib import admin
 from ..models import Category
-from typing import Any, QuerySet
+from django.db.models import QuerySet
+from typing import Any
 
 
 @admin.register(Category)
