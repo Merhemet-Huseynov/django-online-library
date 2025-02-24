@@ -11,5 +11,6 @@ class AuthorSerializer(serializers.ModelSerializer):
             "name", 
             "bio", 
             "birth_date",
+            "image",
             "slug"
         ]

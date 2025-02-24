@@ -15,6 +15,7 @@ python-decouple = "*"
 pytest-django = "*"
 pytest-mock = "*"
 drf-yasg = "*"
+pillow = "*"
 
 [dev-packages]
 

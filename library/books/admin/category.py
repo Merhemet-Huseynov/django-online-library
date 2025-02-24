@@ -1,3 +1,4 @@
+from django.utils.html import format_html
 from django.contrib import admin
 from ..models import Category
 
@@ -8,7 +9,8 @@ class CategoryAdmin(admin.ModelAdmin):
         "get_subcategory",  
         "get_super_category_name", 
         "order",
-        "is_active"
+        "is_active",
+        "icon_preview",
     )
     list_filter = (
         "is_active",
@@ -36,6 +38,13 @@ class CategoryAdmin(admin.ModelAdmin):
     def get_super_category_name(self, obj):
         return obj.super_category.name if obj.super_category else obj.name
     get_super_category_name.short_description = "Super Category"
+
+    def icon_preview(self, obj):
+        """Shows a preview of the icon in the admin panel."""
+        if obj.icon:
+            return format_html('<img src="{}" width="50" height="50" style="border-radius: 10px;" />', obj.icon.url)
+        return "No Image" 
+    icon_preview.short_description = "Icon Preview"  
 
     def activate_categories(self, request, queryset):
         queryset.update(is_active=True)

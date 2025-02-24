@@ -14,6 +14,11 @@ class Author(models.Model):
         blank=True, 
         null=True
     )
+    image = models.ImageField(
+        upload_to="authors/%Y/%m/%d/", 
+        blank=True, 
+        null=True
+    )
     slug = models.SlugField(
         unique=True, 
         blank=True
