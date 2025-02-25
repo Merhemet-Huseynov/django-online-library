@@ -123,7 +123,7 @@ class DailyMessage(models.Model):
             
             if time_diff < expiration_time:
                 seconds_remaining = (expiration_time - time_diff).seconds
-                return f"Please try again in  {cls.format_remaining_time(seconds_remaining)} to send a new message."
+                return f"Please, try again in {cls.format_remaining_time(seconds_remaining)} seconds."
 
         return None
 

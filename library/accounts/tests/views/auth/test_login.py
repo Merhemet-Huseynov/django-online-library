@@ -52,7 +52,7 @@ def test_login_success(client: APIClient, create_user: User) -> None:
     }
 
     response: Response = client.post(
-        "/api/accounts/login/", 
+        "/api/v1/accounts/login/", 
         login_data, 
         format="json"
     )
@@ -80,7 +80,7 @@ def test_login_invalid_credentials(client: APIClient, create_user: User) -> None
     }
 
     response: Response = client.post(
-        "/api/accounts/login/", 
+        "/api/v1/accounts/login/", 
         login_data, 
         format="json"
     )
@@ -105,7 +105,7 @@ def test_login_missing_credentials(client: APIClient) -> None:
     login_data = {}
 
     response: Response = client.post(
-        "/api/accounts/login/", 
+        "/api/v1/accounts/login/", 
         login_data, 
         format="json"
     )

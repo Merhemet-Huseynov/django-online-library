@@ -50,7 +50,7 @@ def test_reset_password_send_code_success(api_client: APIClient, test_user: User
     """
     with patch("services.auth.verification_service.send_verification_email.delay") as mock_send_email:
         response = api_client.post(
-            "/api/accounts/reset-password-send-code/", 
+            "/api/v1/accounts/reset-password-send-code/", 
             {
                 "username": "testuser"
             }
@@ -77,7 +77,7 @@ def test_reset_password_send_code_invalid_user(api_client: APIClient) -> None:
         - The error message indicates that the user does not exist.
     """
     response = api_client.post(
-        "/api/accounts/reset-password-send-code/", 
+        "/api/v1/accounts/reset-password-send-code/", 
         {
             "username": "nonexistent"
         }
@@ -100,7 +100,7 @@ def test_reset_password_send_code_invalid_request(api_client: APIClient) -> None
         - The response contains a missing "username" field.
     """
     response = api_client.post(
-        "/api/accounts/reset-password-send-code/", 
+        "/api/v1/accounts/reset-password-send-code/", 
         {}
     )
 

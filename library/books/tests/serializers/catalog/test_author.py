@@ -26,7 +26,8 @@ def test_author_serializer_serialization() -> None:
         "name": "Test Author",
         "bio": "Some biography",
         "birth_date": "1990-01-01",
-        "slug": "test-author"
+        "slug": "test-author",
+        "image": None
     }
 
     assert serializer.data == expected_data
@@ -44,7 +45,8 @@ def test_author_serializer_deserialization() -> None:
         "name": "New Author",
         "bio": "New author bio",
         "birth_date": "1985-05-15",
-        "slug": "new-author"
+        "slug": "new-author",
+        "image": None
     }
 
     serializer: AuthorSerializer = AuthorSerializer(data=data)
@@ -69,7 +71,8 @@ def test_author_serializer_validation() -> None:
         "name": "",
         "bio": "Test Bio",
         "birth_date": "1995-03-20",
-        "slug": "invalid-author"
+        "slug": "invalid-author",
+        "image": None
     }
 
     serializer: AuthorSerializer = AuthorSerializer(data=data)

@@ -22,7 +22,7 @@ def test_change_password_success() -> None:
     client.force_authenticate(user=user)
 
     response: Response = client.post(
-        "/api/accounts/change-password/", 
+        "/api/v1/accounts/change-password/", 
         {
             "old_password": "oldpassword",
             "new_password": "newsecurepassword",
@@ -54,7 +54,7 @@ def test_change_password_wrong_old_password() -> None:
     client.force_authenticate(user=user)
 
     response: Response = client.post(
-        "/api/accounts/change-password/",
+        "/api/v1/accounts/change-password/",
         {
             "old_password": "wrongpassword",
             "new_password": "newsecurepassword",
@@ -85,7 +85,7 @@ def test_change_password_mismatch() -> None:
     client.force_authenticate(user=user)
 
     response: Response = client.post(
-        "/api/accounts/change-password/",
+        "/api/v1/accounts/change-password/",
         {
             "old_password": "oldpassword",
             "new_password": "newsecurepassword",

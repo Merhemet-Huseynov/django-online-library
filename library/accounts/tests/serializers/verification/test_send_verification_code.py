@@ -19,7 +19,7 @@ def send_verification_code(email: str) -> dict:
     """
     client = APIClient()
     response = client.post(
-        "/api/accounts/send-verification-code/", 
+        "/api/v1/accounts/send-verification-code/", 
         {
             "email": email
         }, 

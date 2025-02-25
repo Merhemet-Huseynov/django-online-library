@@ -69,7 +69,7 @@ def test_reset_password_success(
         "new_password": "newpassword123"
     }
 
-    response: Response = client.post("/api/accounts/reset-password/", data)
+    response: Response = client.post("/api/v1/accounts/reset-password/", data)
 
     assert response.status_code == 200
 
@@ -101,7 +101,7 @@ def test_reset_password_invalid_code(
         "new_password": "newpassword123"
     }
 
-    response: Response = client.post("/api/accounts/reset-password/", data)
+    response: Response = client.post("/api/v1/accounts/reset-password/", data)
 
     assert response.status_code == 400
     assert response.data["verification_code"] == ["Invalid or expired verification code."]

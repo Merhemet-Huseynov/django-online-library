@@ -65,7 +65,7 @@ def test_reset_password_success(
         "new_password": "NewPassword123"
     }
     response = client.post(
-        "/api/accounts/reset-password/", 
+        "/api/v1/accounts/reset-password/", 
         data, 
         format="json"
     )
@@ -100,7 +100,7 @@ def test_reset_password_invalid_code(create_user: User) -> None:
         "new_password": "NewPassword123"
     }
     response = client.post(
-        "/api/accounts/reset-password/", 
+        "/api/v1/accounts/reset-password/", 
         data, 
         format="json"
     )

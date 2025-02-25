@@ -54,7 +54,7 @@ def test_change_password_success(authenticated_client: Tuple[APIClient, User]) -
     """
     client, user = authenticated_client
     response = client.post(
-        "/api/accounts/change-password/",
+        "/api/v1/accounts/change-password/",
         {
             "old_password": "oldpassword123",
             "new_password": "Newpassword123!",
@@ -83,7 +83,7 @@ def test_change_password_wrong_old_password(
     """
     client, _ = authenticated_client
     response = client.post(
-        "/api/accounts/change-password/",
+        "/api/v1/accounts/change-password/",
         {
             "old_password": "wrongpassword",
             "new_password": "Newpassword123!",
@@ -111,7 +111,7 @@ def test_change_password_mismatch_new_passwords(
     """
     client, _ = authenticated_client
     response = client.post(
-        "/api/accounts/change-password/",
+        "/api/v1/accounts/change-password/",
         {
             "old_password": "oldpassword123",
             "new_password": "Newpassword123!",

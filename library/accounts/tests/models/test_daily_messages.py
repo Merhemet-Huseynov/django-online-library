@@ -35,15 +35,16 @@ def test_send_message_success(setup_daily_limit: DailyMessageLimit, email: str) 
 @pytest.mark.django_db
 def test_daily_limit_exceeded(setup_daily_limit: DailyMessageLimit, email: str) -> None:
     """Tests if the daily limit prevents additional messages from being sent."""
-    
+
     for _ in range(setup_daily_limit.limit):
         DailyMessage.send_message(email)
 
     response = DailyMessage.send_message(email)
+
     assert any(
         msg in response
-        for msg in ["You have reached your daily message limit", "Please try again in"]
-    )
+        for msg in ["You have reached your daily message limit", "Please, try again in"]
+    ), f"Expected response to contain limit message but got: {response}"
 
 
 @pytest.mark.django_db
@@ -76,4 +77,4 @@ def test_message_expiration_time(setup_daily_limit: DailyMessageLimit, email: st
     )
     
     response = DailyMessage.send_message(email)
-    assert "Please try again in" in response
+    assert "Please, try again in" in response

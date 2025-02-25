@@ -51,7 +51,7 @@ def test_send_verification_code_daily_limit_exceeded(client, mocker) -> None:
         return_value=None
     )
     response = client.post(
-        "/api/accounts/send-verification-code/", 
+        "/api/v1/accounts/send-verification-code/", 
         {
             "email": email
         }
@@ -59,7 +59,7 @@ def test_send_verification_code_daily_limit_exceeded(client, mocker) -> None:
     assert response.status_code == 200
 
     response = client.post(
-        "/api/accounts/send-verification-code/", 
+        "/api/v1/accounts/send-verification-code/", 
         {
             "email": email
         }
@@ -93,7 +93,7 @@ def test_send_verification_code_expiration_time_not_passed(client, mocker) -> No
     )
     
     assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
-    assert "Please try again in" in response.json()["error"]
+    assert "Please, try again in" in response.json()["error"]
 
 
 @pytest.mark.django_db

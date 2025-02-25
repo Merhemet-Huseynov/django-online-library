@@ -42,7 +42,7 @@ def test_category_list_view(client: APIClient) -> None:
     Asserts:
         The response status code is 200 OK and the response data is a list.
     """
-    response: Response = client.get("/api/books/categories/list/")
+    response: Response = client.get("/api/v1/books/categories/list/")
 
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.data, list)
@@ -59,7 +59,7 @@ def test_category_detail_view_by_id(client: APIClient, category: Category) -> No
     Asserts:
         The response status code is 200 OK, and the returned category matches the requested ID.
     """
-    response: Response = client.get(f"/api/books/categories/detail/{category.id}/")
+    response: Response = client.get(f"/api/v1/books/categories/detail/{category.id}/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["id"] == category.id
@@ -78,7 +78,7 @@ def test_category_detail_view_by_slug(client: APIClient, category: Category) -> 
         The response status code is 200 OK, and the returned 
         category matches the requested slug.
     """
-    response: Response = client.get(f"/api/books/categories/detail/{category.slug}/")
+    response: Response = client.get(f"/api/v1/books/categories/detail/{category.slug}/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["slug"] == category.slug
@@ -95,7 +95,7 @@ def test_category_detail_view_not_found(client: APIClient) -> None:
     Asserts:
         The response status code is 404 Not Found when the category does not exist.
     """
-    response: Response = client.get("/api/books/categories/detail/invalid-id/")
+    response: Response = client.get("/api/v1/books/categories/detail/invalid-id/")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
