@@ -2,7 +2,12 @@ import logging
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView, Response, status
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
+from utils.constats import TimeIntervals
 from books.models.catalog import Author
 from books.serializers.catalog import AuthorSerializer
 
@@ -14,6 +19,7 @@ __all__ = [
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_DAYS), name="dispatch")
 class AuthorListViews(APIView):
     """
     View to list all authors.
@@ -41,9 +47,10 @@ class AuthorListViews(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_DAYS), name="dispatch")
 class AuthorDetailViews(APIView):
     """
-    View to fetch a specific author's details by ID or slug.
+    View to fetch a specific author"s details by ID or slug.
 
     * Allows any user to access author details.
     * Logs the fetching process for the specific author.

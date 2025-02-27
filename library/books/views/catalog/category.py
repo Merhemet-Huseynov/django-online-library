@@ -2,7 +2,10 @@ import logging
 from rest_framework.views import APIView, Response, status
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
+from utils.constats import TimeIntervals
 from books.models.catalog import Category
 from books.serializers.catalog import (
     CategorySerializer, 
@@ -18,6 +21,7 @@ __all__ = [
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_SEC), name="dispatch")
 class CategoryListViews(APIView):
     """
     View to retrieve a list of all categories.
@@ -34,7 +38,8 @@ class CategoryListViews(APIView):
             request: The HTTP request object.
         
         Returns:
-            Response: A Response object containing the serialized category data and status code.
+            Response: A Response object containing the serialized category 
+            data and status code.
         """
         logger.info("Fetching all categories.")
         categories = Category.objects.all()
@@ -43,6 +48,7 @@ class CategoryListViews(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_SEC), name="dispatch")
 class CategoryDetailViews(APIView):
     """
     View to retrieve a single category by ID or slug.
@@ -60,20 +66,32 @@ class CategoryDetailViews(APIView):
             identifier: The category ID or slug.
         
         Returns:
-            Response: A Response object containing the serialized category data and status code.
+            Response: A Response object containing the serialized category 
+            data and status code.
         """
-        logger.info(f"Fetching category with identifier: {identifier}")
+        logger.info(
+            f"Fetching category with identifier: {identifier}"
+        )
         
         if identifier.isdigit():
-            category = get_object_or_404(Category, id=identifier)
+            category = get_object_or_404(
+                Category, 
+                id=identifier
+            )
         else:
-            category = get_object_or_404(Category, slug=identifier)
+            category = get_object_or_404(
+                Category, 
+                slug=identifier
+            )
         
-        logger.info(f"Fetched category with ID: {category.id} and slug: {category.slug}")
+        logger.info(
+            f"Fetched category with ID: {category.id} and slug: {category.slug}"
+        )
         serializer = CategorySerializer(category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_DAYS), name="dispatch")
 class SubCategoryListView(APIView):
     """
     View to find a super category by ID or slug and return its subcategories.
@@ -100,15 +118,19 @@ class SubCategoryListView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        logger.info(f"Fetching super category with identifier: {super_category_name}")
+        logger.info(
+            f"Fetching super category with identifier: {super_category_name}"
+        )
     
         if super_category_name.isdigit():
             super_category = get_object_or_404(
-                Category, id=super_category_name
+                Category, 
+                id=super_category_name
             )
         else:
             super_category = get_object_or_404(
-                Category, slug=super_category_name
+                Category, 
+                slug=super_category_name
             )
 
         subcategories = Category.objects.filter(
