@@ -50,7 +50,7 @@ class AuthorListViews(APIView):
 @method_decorator(cache_page(TimeIntervals.ONE_MONTH_IN_DAYS), name="dispatch")
 class AuthorDetailViews(APIView):
     """
-    View to fetch a specific author"s details by ID or slug.
+    View to fetch a specific author's details by ID or slug.
 
     * Allows any user to access author details.
     * Logs the fetching process for the specific author.
