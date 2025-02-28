@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     # Third-party
+    "taggit",
     "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",

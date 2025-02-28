@@ -1,35 +1,113 @@
 from django.db import models
+from taggit.managers import TaggableManager
+from django.core.exceptions import ValidationError
+from typing import Optional
+
 from .author import Author
 from .category import Category
 
 
 class Book(models.Model):
+    """Book model - stores basic book information."""
+
+    # Main relationships
     author = models.ForeignKey(
-        "Author", 
-        on_delete=models.CASCADE, 
+        "Author",
+        on_delete=models.CASCADE,
         related_name="books"
     )
     category = models.ForeignKey(
-        "Category", 
-        on_delete=models.SET_NULL, 
-        null=True, 
+        "Category",
+        on_delete=models.SET_NULL,
+        null=True,
         related_name="books"
     )
 
-    title = models.CharField(
-        max_length=255
-    )
+    # Basic information
+    title = models.CharField(max_length=255)
     isbn = models.CharField(
-        max_length=15, 
-        null=True, 
-        blank=True, 
+        max_length=15,
+        null=True,
+        blank=True,
         unique=True
+    )
+    description = models.TextField(
+        blank=True, 
+        null=True
+    )
+    published_date = models.DateField()
+
+    # Condition and format
+    CONDITION_CHOICES = [
+        ("new", "New"),
+        ("good", "Good"),
+        ("old", "Old"),
+        ("damaged", "Damaged"),
+    ]
+    condition = models.CharField(
+        max_length=10,
+        choices=CONDITION_CHOICES,
+        default="new"
+    )
+
+    FORMAT_CHOICES = [
+        ("physical", "Physical"),
+        ("ebook", "E-Book"),
+        ("both", "Both"),
+    ]
+    book_format = models.CharField(
+        max_length=10,
+        choices=FORMAT_CHOICES,
+        default="physical"
+    )
+
+    image = models.ImageField(
+        upload_to="book_images/%Y/%m/%d/",
+        blank=True,
+        null=True
+    )
+    tags = TaggableManager(
+        blank=True
+    )
+
+    # Physical book details
+    page_count = models.PositiveIntegerField(
+        blank=True, 
+        null=True
+    )
+    edition = models.CharField(
+        max_length=50, 
+        blank=True, 
+        null=True
+    )
+    publisher = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True
+    )
+    language = models.CharField(
+        max_length=50, 
+        default="English"
+    )
+    shelf_location = models.CharField(
+        max_length=50, 
+        blank=True, 
+        null=True
+    )
+
+    # Digital books
+    digital_file = models.FileField(
+        upload_to="ebooks/",
+        blank=True,
+        null=True
+    )
+
+    # Rental features
+    allow_rental = models.BooleanField(
+        default=False
     )
     available = models.BooleanField(
         default=True
-    )
-    allow_rental = models.BooleanField(
-        default=False
     )
     book_count = models.PositiveIntegerField(
         default=1
@@ -37,15 +115,40 @@ class Book(models.Model):
     available_count = models.PositiveIntegerField(
         default=1
     )
-    published_date = models.DateField()
 
-    def __str__(self):
+    # Other general fields
+    added_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self) -> str:
+        """
+        Returns the string representation of the Book object, 
+        which is the book's title.
+
+        Returns:
+            str: The title of the book.
+        """
         return self.title
 
-    def average_rating(self):
-        """Calculates the average rating of all reviews of the book."""
-        reviews = self.reviews.all()
-        if reviews.exists():
-            total_rating = sum(review.rating for review in reviews)
-            return total_rating / reviews.count()
-        return 0
+    def clean(self) -> None:
+        """
+        Validates the book's data before saving, ensuring the 
+        ISBN and book format are correct.
+
+        - Ensures the ISBN is either 10 or 13 digits long.
+        - If the book is in eBook format, it checks that a digital 
+        file is provided.
+
+        Raises:
+            ValidationError: If the ISBN or eBook file validation fails.
+        """
+        if self.isbn and (len(self.isbn) not in [10, 13] or not self.isbn.isdigit()):
+            raise ValidationError("ISBN must be 10 or 13 digits.")
+
+        if self.book_format == "ebook" and not self.digital_file:
+            raise ValidationError(
+                "An E-Book file must be provided for E-Book format."
+            )
+
+        super().clean()

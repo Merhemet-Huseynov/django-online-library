@@ -17,6 +17,7 @@ pytest-mock = "*"
 pillow = "*"
 drf-yasg = "*"
 django-redis = "*"
+django-taggit = "*"
 
 [dev-packages]
 
