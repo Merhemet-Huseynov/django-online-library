@@ -105,7 +105,7 @@ class BookAdmin(admin.ModelAdmin):
 
     display_tags.short_description = "Tags"
 
-    # 📌 Bulk actions (Mark books as available/unavailable)
+    # Bulk actions (Mark books as available/unavailable)
     actions = ["make_available", "make_unavailable"]
 
     def make_available(self, request, queryset):

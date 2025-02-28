@@ -15,7 +15,6 @@ from .history import (
 
 from .rental import (
     OverdueFineSerializer, 
-    OverdueNotificationSerializer, 
     RentalPriceSerializer, 
     RentalScheduleSerializer
 )

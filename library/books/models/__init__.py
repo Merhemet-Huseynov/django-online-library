@@ -1,5 +1,5 @@
 from .catalog import Category, Author, Book
-from .rental import RentalPrice, RentalSchedule, OverdueNotification, OverdueFine
+from .rental import RentalPrice, RentalSchedule, OverdueFine
 from .sale import SalePrice, SaleTransaction
 from .event import EventSchedule
 from .reservation import ReservationSchedule

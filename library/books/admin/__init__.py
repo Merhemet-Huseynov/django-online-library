@@ -1,10 +1,8 @@
 from .admin import (
-    Book,
     EventSchedule,
     PurchaseHistory,
     RentalHistory,
     OverdueFine,
-    OverdueNotification,
     RentalPrice,
     RentalSchedule,
     ReservationSchedule,
@@ -17,3 +15,4 @@ from .admin import (
 
 from .category import CategoryAdmin
 from .author import AuthorAdmin
+from .book import BookAdmin

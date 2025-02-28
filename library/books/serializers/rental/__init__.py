@@ -1,4 +1,3 @@
 from .overdue_fine import OverdueFineSerializer
-from .overdue_notification import OverdueNotificationSerializer
 from .rental_price import RentalPriceSerializer
 from .rental_schedule import RentalScheduleSerializer
