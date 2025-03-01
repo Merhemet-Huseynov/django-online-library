@@ -1,1 +1,2 @@
 from .book_review import BookReviewSerializer
+from .book_recommendation import BookRecommendationSerializer

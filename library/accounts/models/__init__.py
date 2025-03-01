@@ -3,3 +3,4 @@ from .verification import (
     DailyMessage, 
     DailyMessageLimit
 )
+from .user import UserPreferences

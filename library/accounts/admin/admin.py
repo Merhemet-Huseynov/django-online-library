@@ -1,6 +1,6 @@
 from django.contrib import admin
-from ..models import BookReview, BookRecommendation
+from ..models import UserPreferences
+
 
 # Register your models here.
-admin.site.register(BookRecommendation)
 admin.site.register(UserPreferences)

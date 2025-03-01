@@ -1,3 +1,2 @@
-from .book_recommendation import BookRecommendationSerializer
 from .user_preferences import UserPreferencesSerializer
 from .user import UserSerializer

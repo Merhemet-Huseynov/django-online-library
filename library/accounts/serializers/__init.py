@@ -11,3 +11,7 @@ from .auth import (
     LoginSerializer, 
     LogoutSerializer
 )
+from .user import (
+    UserPreferencesSerializer, 
+    UserSerializer
+)

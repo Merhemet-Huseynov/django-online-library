@@ -1,2 +1,0 @@
-from .user_preferences import UserPreferences
-from .book_recommendation import BookRecommendation
