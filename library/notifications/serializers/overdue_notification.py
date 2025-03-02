@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from books.models.catalog import Book
-from books.models.rental import OverdueNotification
+from notifications.models.overdue_notification import OverdueNotification
 
 
 class OverdueNotificationSerializer(serializers.ModelSerializer):

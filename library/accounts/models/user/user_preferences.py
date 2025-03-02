@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from books.models.catalog import Category, Author
 
 class UserPreferences(models.Model):
     user = models.OneToOneField(
@@ -9,12 +10,12 @@ class UserPreferences(models.Model):
         related_name="preferences"
     )
     favorite_categories = models.ManyToManyField(
-        "Category", 
+        "books.Category",  # DÜZƏLDİLDİ
         related_name="preferred_by", 
         blank=True
     )
     favorite_authors = models.ManyToManyField(
-        "Author", 
+        "books.Author",  # DÜZƏLDİLDİ
         related_name="preferred_by", 
         blank=True
     )

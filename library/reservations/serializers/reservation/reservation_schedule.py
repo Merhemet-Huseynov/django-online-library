@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from books.models.catalog import Book
-from books.models.reservation import ReservationSchedule
+from reservations.models.reservation import ReservationSchedule
 
 
 class ReservationScheduleSerializer(serializers.ModelSerializer):

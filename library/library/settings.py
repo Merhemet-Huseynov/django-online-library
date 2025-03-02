@@ -49,8 +49,10 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     
     # Apps 
-    "accounts",
     "notifications",
+    "reservations",
+    "transactions",
+    "accounts",
     "books",
 ]
 

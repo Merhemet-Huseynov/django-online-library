@@ -1,6 +1,6 @@
 from django.db import models
-from ..catalog import Book
-from ..rental import RentalSchedule
+from books.models.catalog import Book
+from transactions.models.rental import RentalSchedule
 from django.contrib.auth.models import User
 
 

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 from datetime import timedelta
 from django.db import models
-from ..catalog.book import Book
+from books.models.catalog import Book
 
 
 class RentalSchedule(models.Model):

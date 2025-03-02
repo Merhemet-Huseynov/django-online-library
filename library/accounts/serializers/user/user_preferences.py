@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from books.models.user import UserPreferences
+from accounts.models.user import UserPreferences
 from books.models.catalog import Category, Author
 
 

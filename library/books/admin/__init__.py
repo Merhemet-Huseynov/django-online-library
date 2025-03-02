@@ -1,16 +1,6 @@
-from .admin import (
-    EventSchedule,
-    PurchaseHistory,
-    RentalHistory,
-    OverdueFine,
-    RentalPrice,
-    RentalSchedule,
-    ReservationSchedule,
+from .admin import (  
     BookReview,
-    SalePrice,
-    SaleTransaction,
     BookRecommendation,
-    UserPreferences
 )
 
 from .category import CategoryAdmin

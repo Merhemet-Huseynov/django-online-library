@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from books.models.catalog import Book
-from books.models.sale import SaleTransaction
+from transactions.models.sale import SaleTransaction
 
 
 class SaleTransactionSerializer(serializers.ModelSerializer):

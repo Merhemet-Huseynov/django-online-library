@@ -1,5 +1,5 @@
 from django.db import models
-from ..catalog.book import Book
+from books.models.catalog import Book
 
 
 class RentalPrice(models.Model):
