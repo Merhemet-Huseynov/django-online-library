@@ -4,19 +4,19 @@ from accounts.views import *
 urlpatterns = [
     # Auth endpoints
     path(
-        "register/", 
+        "accounts/register/", 
         RegisterView.as_view(),
         name="register"
     ),
 
     path(
-        "login/", 
+        "accounts/login/", 
         LoginView.as_view(), 
         name="login"
     ),
 
     path(
-        "logout/", 
+        "accounts/logout/", 
         LogoutView.as_view(), 
         name="logout"
     ),

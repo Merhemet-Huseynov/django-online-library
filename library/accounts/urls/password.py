@@ -4,19 +4,19 @@ from accounts.views import *
 urlpatterns = [
     # Password endpoints
     path(
-        "reset-password-send-code/", 
+        "accounts/reset-password-send-code/", 
         ResetPasswordSendCodeView.as_view(), 
         name="reset-password-send-code"
     ),
 
     path(
-        "reset-password/", 
+        "accounts/reset-password/", 
         ResetPasswordView.as_view(), 
         name="reset-password"
     ),
     
     path(
-        "change-password/",
+        "accounts/change-password/",
         ChangePasswordView.as_view(), 
         name="change-password"
     ),

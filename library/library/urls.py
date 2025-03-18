@@ -16,14 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from django.conf import settings
-from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+)
 
 
-# Swagger configuration
+# API Documentation (Swagger & Redoc)
 schema_view = get_schema_view(
     openapi.Info(
         title="Online Library API",
@@ -39,37 +44,52 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    # Admin Panel
     path(
         "admin/", 
         admin.site.urls
     ),
-    
+
+    # API Documentation
     path(
-        "swagger/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="swagger-ui",
+        "swagger/", 
+        schema_view.with_ui("swagger", cache_timeout=0), 
+        name="swagger-ui"
     ),
-    
     path(
-        "redoc/",
-        schema_view.with_ui("redoc", cache_timeout=0),
-        name="redoc-ui",
+        "redoc/", 
+        schema_view.with_ui("redoc", cache_timeout=0), 
+        name="redoc-ui"
     ),
-    
+
+    # JWT Authentication Endpoints
     path(
-        "api/v1/books/", 
+        "api/token/", 
+        TokenObtainPairView.as_view(), 
+        name="token_obtain_pair"
+    ),
+    path(
+        "api/token/refresh/", 
+        TokenRefreshView.as_view(), 
+        name="token_refresh"
+    ),
+    path(
+        "api/token/verify/", 
+        TokenVerifyView.as_view(), 
+        name="token_verify"
+    ),
+
+    # API Endpoints
+    path(
+        "api/v1/", 
         include("books.urls")
     ),
-    
     path(
-        "api/v1/accounts/", 
+        "api/v1/", 
         include("accounts.urls")
     ),
 ]
 
-
-# For media files
-urlpatterns += static(
-    settings.MEDIA_URL, 
-    document_root=settings.MEDIA_ROOT
-)
+# Media Files (Only in Development)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
