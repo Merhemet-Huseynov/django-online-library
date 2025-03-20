@@ -4,13 +4,13 @@ from books.views import *
 urlpatterns = [
     # Author endpoints
     path(
-        "books/authors/list/", 
+        "authors/", 
         AuthorListViews.as_view(), 
         name="author-list"
     ),
     
     path(
-        "books/authors/<str:identifier>/", 
+        "authors/<str:identifier>/detail/", 
         AuthorDetailViews.as_view(), 
         name="author-detail"
     )

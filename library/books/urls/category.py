@@ -4,19 +4,19 @@ from books.views import *
 urlpatterns = [
     # Category endpoints
     path(
-        "books/categories/list/",
+        "categories/",
         CategoryListViews.as_view(),
         name="categories-list"
     ),
 
     path(
-        "books/categories/detail/<str:identifier>/",
+        "categories/<str:identifier>/detail/",
         CategoryDetailViews.as_view(),
         name="categories-detail"
     ),
 
     path(
-        "books/categories/subcategories/<str:super_category_name>/",
+        "subcategories/<str:identifier>/detail",
         SubCategoryListView.as_view(),
         name="subcategories-list"
     ),

@@ -44,7 +44,7 @@ def test_author_list_view(api_client: APIClient, authors: List[Author]) -> None:
     Returns:
         None: Asserts that the response is correct.
     """
-    url = "/api/v1/books/authors/list/"
+    url = "/api/v1/authors/"
     response = api_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -63,7 +63,7 @@ def test_author_detail_view_by_id(api_client: APIClient, authors: List[Author]) 
     Returns:
         None: Asserts that the response is correct.
     """
-    url = f"/api/v1/books/authors/{authors[0].id}/"
+    url = f"/api/v1/authors/{authors[0].id}/detail/"
     response = api_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -81,7 +81,7 @@ def test_author_detail_view_by_slug(api_client: APIClient, authors: List[Author]
     Returns:
         None: Asserts that the response is correct.
     """
-    url = f"/api/v1/books/authors/{authors[1].slug}/"
+    url = f"/api/v1/authors/{authors[1].slug}/detail/"
     response = api_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK

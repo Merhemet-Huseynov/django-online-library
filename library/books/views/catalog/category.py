@@ -4,6 +4,8 @@ from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from utils.constats import TimeIntervals
 from books.models.catalog import Category
@@ -30,6 +32,10 @@ class CategoryListViews(APIView):
     """
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of all categories.",
+        responses={status.HTTP_200_OK: CategorySerializer(many=True)}
+    )
     def get(self, request, *args, **kwargs) -> Response:
         """
         Retrieve a list of all categories.
@@ -57,6 +63,10 @@ class CategoryDetailViews(APIView):
     """
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Retrieve a single category by ID or slug.",
+        responses={status.HTTP_200_OK: CategorySerializer()}
+    )
     def get(self, request, identifier: str, *args, **kwargs) -> Response:
         """
         Retrieve a single category by ID or slug.
@@ -100,18 +110,25 @@ class SubCategoryListView(APIView):
     """
     permission_classes = [AllowAny]
 
-    def get(self, request, super_category_name: str, *args, **kwargs) -> Response:
+    @swagger_auto_schema(
+        operation_description="Retrieve subcategories of a given super category.",
+        responses={
+            status.HTTP_200_OK: SubCategorySerializer(many=True),
+            status.HTTP_400_BAD_REQUEST: openapi.Response("Invalid input")
+        }
+    )
+    def get(self, request, identifier: str, *args, **kwargs) -> Response:
         """
         Finds a super category by ID or slug and returns its subcategories.
         
         Args:
             request: The HTTP request object.
-            super_category_name: The super category ID or slug.
+            identifier: The super category ID or slug.
         
         Returns:
             Response: A Response object containing the serialized subcategory data and status code.
         """
-        if not super_category_name:
+        if not identifier:
             logger.warning("No super category name or ID provided.")
             return Response(
                 {"detail": "A super category name or ID is required."},
@@ -119,18 +136,18 @@ class SubCategoryListView(APIView):
             )
         
         logger.info(
-            f"Fetching super category with identifier: {super_category_name}"
+            f"Fetching super category with identifier: {identifier}"
         )
     
-        if super_category_name.isdigit():
+        if identifier.isdigit():
             super_category = get_object_or_404(
                 Category, 
-                id=super_category_name
+                id=identifier
             )
         else:
             super_category = get_object_or_404(
                 Category, 
-                slug=super_category_name
+                slug=identifier
             )
 
         subcategories = Category.objects.filter(

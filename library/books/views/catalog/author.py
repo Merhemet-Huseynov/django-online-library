@@ -2,17 +2,16 @@ import logging
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView, Response, status
-from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 
 from utils.constats import TimeIntervals
 from books.models.catalog import Author
 from books.serializers.catalog import AuthorSerializer
 
 __all__ = [
-    "AuthorListViews", 
+    "AuthorListViews",
     "AuthorDetailViews"
 ]
 
@@ -30,6 +29,10 @@ class AuthorListViews(APIView):
     """
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of all authors.",
+        responses={status.HTTP_200_OK: AuthorSerializer(many=True)}
+    )
     def get(self, request) -> Response:
         """
         Get the list of all authors.
@@ -58,6 +61,10 @@ class AuthorDetailViews(APIView):
     """
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Retrieve details of an author by ID or slug.",
+        responses={status.HTTP_200_OK: AuthorSerializer()}
+    )
     def get(self, request, identifier: str) -> Response:
         """
         Get details of a specific author by ID or slug.

@@ -42,7 +42,7 @@ def test_category_list_view(client: APIClient) -> None:
     Asserts:
         The response status code is 200 OK and the response data is a list.
     """
-    response: Response = client.get("/api/v1/books/categories/list/")
+    response: Response = client.get("/api/v1/categories/")
 
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.data, list)
@@ -59,7 +59,7 @@ def test_category_detail_view_by_id(client: APIClient, category: Category) -> No
     Asserts:
         The response status code is 200 OK, and the returned category matches the requested ID.
     """
-    response: Response = client.get(f"/api/v1/books/categories/detail/{category.id}/")
+    response: Response = client.get(f"/api/v1/categories/{category.id}/detail/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["id"] == category.id
@@ -78,7 +78,7 @@ def test_category_detail_view_by_slug(client: APIClient, category: Category) -> 
         The response status code is 200 OK, and the returned 
         category matches the requested slug.
     """
-    response: Response = client.get(f"/api/v1/books/categories/detail/{category.slug}/")
+    response: Response = client.get(f"/api/v1/categories/{category.slug}/detail/")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["slug"] == category.slug
@@ -120,7 +120,7 @@ def test_get_subcategories_by_id_success(
 
     """Test retrieving subcategories for a given category using ID."""
     category1, _ = setup_categories
-    url: str = reverse("subcategories-list", kwargs={"super_category_name": category1.id})
+    url: str = reverse("subcategories-list", kwargs={"identifier": category1.id})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -137,7 +137,7 @@ def test_get_subcategories_by_slug_success(
     
     """Test retrieving subcategories for a given category using slug."""
     category1, _ = setup_categories
-    url: str = reverse("subcategories-list", kwargs={"super_category_name": category1.slug})
+    url: str = reverse("subcategories-list", kwargs={"identifier": category1.slug})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -150,7 +150,7 @@ def test_get_subcategories_by_slug_success(
 @pytest.mark.django_db
 def test_get_subcategories_category_not_found(client: Client) -> None:
     """Test when the category ID or slug does not exist."""
-    url: str = reverse("subcategories-list", kwargs={"super_category_name": "non-existent"})
+    url: str = reverse("subcategories-list", kwargs={"identifier": "non-existent"})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -160,7 +160,7 @@ def test_get_subcategories_category_not_found(client: Client) -> None:
 def test_get_subcategories_empty(setup_categories: Tuple[Category, Category], client: Client) -> None:
     """Test when a category has no subcategories."""
     _, category2 = setup_categories
-    url: str = reverse("subcategories-list", kwargs={"super_category_name": category2.id})
+    url: str = reverse("subcategories-list", kwargs={"identifier": category2.id})
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
