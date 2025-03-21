@@ -123,7 +123,8 @@ class Book(models.Model):
     )
     slug = models.SlugField(
         unique=True, 
-        blank=True
+        blank=True,
+        null=True
     )
 
     def __str__(self) -> str:

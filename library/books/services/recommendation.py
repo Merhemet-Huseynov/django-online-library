@@ -1,9 +1,9 @@
 from django.db import models
 from django.db.models import Count
 from models.catalog.book import Book
-from models.rental.rental_schedule import RentalSchedule
-from models.history.purchase_history import PurchaseHistory
-from models.user.book_recommendation import BookRecommendation
+from transactions.models.rental.rental_schedule import RentalSchedule
+from transactions.models.history.purchase_history import PurchaseHistory
+from books.models.review import BookRecommendation
 
 
 def get_top_rated_books(user, limit=5):

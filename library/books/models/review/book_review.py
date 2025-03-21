@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ..catalog.book import Book
+from books.models.catalog.book import Book
 
 
 class BookReview(models.Model):
