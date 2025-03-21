@@ -66,16 +66,12 @@ class BookDetailView(APIView):
         """
         logger.info(f"Fetching book with identifier: {identifier}")
 
-        try:
-            if identifier.isdigit():
-                book: Book = get_object_or_404(Book, id=int(identifier))
-            else:
-                book: Book = get_object_or_404(Book, slug=identifier)
-            
-            logger.info(f"Fetched book with ID: {book.id} and title: {book.title}")
-            serializer = BookSerializer(book)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if identifier.isdigit():
+            book: Book = get_object_or_404(Book, id=int(identifier))
+        else:
+            book: Book = get_object_or_404(Book, slug=identifier)
         
-        except Exception as e:
-            logger.error(f"Error fetching book with identifier {identifier}: {str(e)}")
-            return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+        logger.info(f"Fetched book with ID: {book.id} and title: {book.title}")
+        serializer = BookSerializer(book)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

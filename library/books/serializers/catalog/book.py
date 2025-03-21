@@ -25,6 +25,7 @@ class BookSerializer(TaggitSerializer, serializers.ModelSerializer):
             "isbn",
             "description",
             "published_date",
+            "slug",
 
             # Book Properties
             "condition",

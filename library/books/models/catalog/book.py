@@ -5,6 +5,7 @@ from typing import Optional
 
 from .author import Author
 from .category import Category
+from utils.slug import generate_unique_slug
 
 
 class Book(models.Model):
@@ -120,6 +121,10 @@ class Book(models.Model):
     added_date = models.DateTimeField(
         auto_now_add=True
     )
+    slug = models.SlugField(
+        unique=True, 
+        blank=True
+    )
 
     def __str__(self) -> str:
         """
@@ -130,6 +135,22 @@ class Book(models.Model):
             str: The title of the book.
         """
         return self.title
+    
+    
+    def save(self, *args, **kwargs) -> None:
+        """
+        Sets the slug before saving the object.
+
+        If the slug is not provided, it generates a unique slug based on 
+        the book"s name.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        if not self.slug:
+            self.slug = generate_unique_slug(self.title, Book)
+        super().save(*args, **kwargs)
 
     def clean(self) -> None:
         """
