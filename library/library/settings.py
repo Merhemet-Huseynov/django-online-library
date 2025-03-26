@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "reservations",
     "transactions",
     "accounts",
+    "payments",
     "books",
 ]
 
@@ -217,41 +218,19 @@ CACHE_MIDDLEWARE_KEY_PREFIX = "django_cache"
 
 # Logging conf
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "level": "DEBUG",  
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "filename": "debug.log",  
-            "formatter": "verbose", 
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
         },
     },
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",  
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",  
-            "propagate": True,
-        },
-        "myapp": {
-            "handlers": ["console", "file"],
-            "level": "INFO",  
-            "propagate": False,
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',  
+            'propagate': True,
         },
     },
 }

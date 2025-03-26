@@ -88,6 +88,10 @@ urlpatterns = [
         "api/v1/", 
         include("accounts.urls")
     ),
+    path(
+        "api/v1/", 
+        include("payments.urls")
+    ),
 ]
 
 # Media Files (Only in Development)
