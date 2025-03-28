@@ -3,6 +3,9 @@ from reservations.models.event import EventSchedule
 
 
 class EventScheduleSerializer(serializers.ModelSerializer):
+    """
+    Serializer for EventSchedule model, to serialize event schedule data.
+    """
     class Meta:
         model = EventSchedule
         fields = [
@@ -11,5 +14,7 @@ class EventScheduleSerializer(serializers.ModelSerializer):
             "description", 
             "start_time", 
             "end_time", 
-            "location"
+            "location",
+            "image",
+            "video"
         ]
