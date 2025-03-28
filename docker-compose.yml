@@ -3,7 +3,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    env_file: ".env" 
+    env_file: ".env.docker" 
     ports:
       - "8000:8000"
     depends_on:
@@ -14,7 +14,7 @@ services:
 
   my-postgres:
     image: postgres:15
-    env_file: ".env" 
+    env_file: ".env.docker" 
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -36,7 +36,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.celery
-    env_file: ".env"  
+    env_file: ".env.docker"  
     depends_on:
       - redis
       - my-postgres

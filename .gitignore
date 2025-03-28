@@ -1,2 +1,9 @@
 __pycache__
+.env.docker
+.gitignore
 .env
+migrations
+media
+.pytest_chace
+debug.log
+dump.rdb

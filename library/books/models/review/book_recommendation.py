@@ -10,7 +10,7 @@ class BookRecommendation(models.Model):
         related_name="recommendations"
     )
     book = models.ForeignKey(
-        "Book", 
+        "Book",
         on_delete=models.CASCADE, 
         related_name="recommendations"
     )

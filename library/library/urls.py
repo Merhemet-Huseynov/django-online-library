@@ -96,6 +96,10 @@ urlpatterns = [
         "api/v1/", 
         include("reservations.urls")
     ),
+    path(
+        "api/v1/", 
+        include("transactions.urls")
+    ),
 ]
 
 # Media Files (Only in Development)

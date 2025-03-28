@@ -1,17 +1,32 @@
 from rest_framework import serializers
-from books.models.catalog import Book
 from transactions.models.sale import SalePrice
 
 
 class SalePriceSerializer(serializers.ModelSerializer):
-    book = serializers.PrimaryKeyRelatedField(
-        queryset=Book.objects.all()
-    )
+    """
+    Serializer for converting SalePrice model instances to JSON format.
+    Includes book title, price, and creation date (created_at).
+    """
     
+    book_title = serializers.CharField(
+        source="book.title",  
+        read_only=True
+    )
+    created_at = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M:%S", 
+        read_only=True
+    )
+
     class Meta:
         model = SalePrice
         fields = [
             "id", 
             "book", 
-            "price"
+            "book_title", 
+            "price", 
+            "created_at"
+        ]
+        read_only_fields = [
+            "id", 
+            "created_at"
         ]

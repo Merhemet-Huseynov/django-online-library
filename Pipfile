@@ -12,12 +12,13 @@ djangorestframework-simplejwt = "*"
 redis = "*"
 django-celery-email = "*"
 python-decouple = "*"
-pytest-django = "*"
 pytest-mock = "*"
 pillow = "*"
 drf-yasg = "*"
 django-redis = "*"
 django-taggit = "*"
+psycopg2 = "*"
+pytest-django = "*"
 
 [dev-packages]
 
