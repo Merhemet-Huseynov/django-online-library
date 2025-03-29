@@ -4,7 +4,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.request import Request
+from django.db import transaction
 
+from books.models.review import UserBookView, BookRecommendation
 from books.serializers.catalog import BookSerializer
 from books.models.catalog import Book
 
@@ -53,25 +55,27 @@ class BookDetailView(APIView):
         operation_description="Retrieve a book by ID or slug.",
         responses={status.HTTP_200_OK: BookSerializer()}
     )
-    def get(self, request: Request, identifier: str, *args, **kwargs) -> Response:
+    def get(self, request, identifier: str, *args, **kwargs):
         """
         Handle GET request to fetch a book by ID or slug.
-
-        Args:
-            request (Request): The HTTP request object.
-            identifier (str): The book's ID (integer) or slug (string).
-
-        Returns:
-            Response: A JSON response containing the book details.
         """
         logger.info(f"Fetching book with identifier: {identifier}")
 
         if identifier.isdigit():
-            book: Book = get_object_or_404(Book, id=int(identifier))
+            book = get_object_or_404(Book, id=int(identifier))
         else:
-            book: Book = get_object_or_404(Book, slug=identifier)
-        
+            book = get_object_or_404(Book, slug=identifier)
+
         logger.info(f"Fetched book with ID: {book.id} and title: {book.title}")
+
+        user = request.user
+
+        # Check if the user has already viewed this book
+        already_viewed = UserBookView.objects.filter(user=user, book=book).exists()
+
+        if not already_viewed:
+            UserBookView.objects.create(user=user, book=book)
+            logger.info(f"User {user.username} viewed the book {book.title} for the first time")
+
         serializer = BookSerializer(book)
         return Response(serializer.data, status=status.HTTP_200_OK)
-

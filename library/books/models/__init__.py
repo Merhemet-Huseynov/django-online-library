@@ -1,2 +1,2 @@
 from .catalog import Category, Author, Book
-from .review import BookReview, BookRecommendation
+from .review import BookReview, BookRecommendation, UserBookView
