@@ -3,13 +3,13 @@ from transactions.views import *
 
 urlpatterns = [
     path(
-        'sale_price/', 
+        "sale_price/", 
         SalePriceListAPIView.as_view(), 
-        name='sale-price-list'
+        name="sale-price-list"
     ),
     path(
-        'sale_price/<int:pk>/',
+        "sale_price/<int:pk>/",
         SalePriceDetailAPIView.as_view(), 
-        name='sale-price-detail'
+        name="sale-price-detail"
     ),
 ]

@@ -1,1 +1,2 @@
 from .sale_price import SalePriceAdmin
+from .sale_transaction import SaleTransactionAdmin
