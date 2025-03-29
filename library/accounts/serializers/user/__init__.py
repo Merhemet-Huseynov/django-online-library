@@ -1,2 +1,2 @@
-from .user_preferences import UserPreferencesSerializer
+from .user_preferences import UserPreferencesSerializer, UserPreferencesDetailSerializer
 from .user import UserSerializer
