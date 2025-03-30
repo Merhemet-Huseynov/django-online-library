@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from event_manager.models.event import EventSchedule
 from event_manager.serializers.event import EventScheduleSerializer
@@ -25,8 +26,14 @@ class EventScheduleListAPIView(APIView):
     """
     @swagger_auto_schema(
         operation_summary="Retrieve all events",
-        operation_description="Returns all `EventSchedule` objects in JSON format.",
-        responses={200: EventScheduleSerializer(many=True)}
+        operation_description="Fetches and returns all `EventSchedule` objects in JSON format.",
+        responses={
+            200: openapi.Response(
+                description="List of events",
+                schema=EventScheduleSerializer(many=True)
+            )
+        },
+        tags=["Events"]
     )
     def get(self, request) -> Response:
         """
@@ -54,11 +61,27 @@ class EventScheduleDetailAPIView(APIView):
     """
     @swagger_auto_schema(
         operation_summary="Retrieve a single event by ID",
-        operation_description="Returns a single `EventSchedule` object based on the provided `event_id`.",
+        operation_description="Fetches and returns a single `EventSchedule` object using the provided `event_id`.",
+        manual_parameters=[
+            openapi.Parameter(
+                "event_id",
+                openapi.IN_PATH,
+                description="ID of the event to retrieve",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
         responses={
-            200: EventScheduleSerializer(),
-            404: "Event not found"
-        }
+            200: openapi.Response(
+                description="Event details",
+                schema=EventScheduleSerializer()
+            ),
+            404: openapi.Response(
+                description="Event not found",
+                examples={"application/json": {"detail": "Not found."}}
+            )
+        },
+        tags=["Events"]
     )
     def get(self, request, event_id: int) -> Response:
         """

@@ -19,10 +19,14 @@ logger = logging.getLogger(__name__)
 
 
 class BookReviewListCreateAPIView(APIView):
+
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
+        operation_description="Retrieve all reviews for a given book.",
+        operation_summary="Get Book Reviews",
         responses={200: BookReviewSerializer(many=True)},
+        tags=["Book Reviews"]
     )
     def get(self, request: Any, book_id: int) -> Response:
         """
@@ -41,15 +45,18 @@ class BookReviewListCreateAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        operation_description="Create a new review for a specified book.",
+        operation_summary="Create Book Review",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                "rating": openapi.Schema(type=openapi.TYPE_INTEGER, description="Price of the opinion"),
-                "review": openapi.Schema(type=openapi.TYPE_STRING, description="Opinion text")
+                "rating": openapi.Schema(type=openapi.TYPE_INTEGER, description="Rating of the book (1-5)"),
+                "review": openapi.Schema(type=openapi.TYPE_STRING, description="The text content of the review")
             },
             required=["rating", "review"]
         ),
-        responses={201: BookReviewSerializer(), 400: "Bad Request"}
+        responses={201: BookReviewSerializer(), 400: "Bad Request"},
+        tags=["Book Reviews"]
     )
     def post(self, request: Any, book_id: int) -> Response:
         """
@@ -92,7 +99,10 @@ class BookReviewDetailAPIView(APIView):
         return get_object_or_404(BookReview, id=review_id)
 
     @swagger_auto_schema(
-        responses={200: BookReviewSerializer(), 404: "Not Found"}
+        operation_description="Retrieve details of a specific review.",
+        operation_summary="Get Book Review Details",
+        responses={200: BookReviewSerializer(), 404: "Not Found"},
+        tags=["Book Reviews"]
     )
     def get(self, request: Any, review_id: int) -> Response:
         """
@@ -110,8 +120,11 @@ class BookReviewDetailAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        operation_description="Update an existing review if the requesting user is the owner.",
+        operation_summary="Update Book Review",
         request_body=BookReviewSerializer,
-        responses={200: BookReviewSerializer(), 400: "Bad Request", 403: "Forbidden"}
+        responses={200: BookReviewSerializer(), 400: "Bad Request", 403: "Forbidden"},
+        tags=["Book Reviews"]
     )
     def put(self, request: Any, review_id: int) -> Response:
         """
@@ -139,7 +152,10 @@ class BookReviewDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        responses={204: "No Content", 403: "Forbidden"}
+        operation_description="Delete a review if the requesting user is the owner.",
+        operation_summary="Delete Book Review",
+        responses={204: "No Content", 403: "Forbidden"},
+        tags=["Book Reviews"]
     )
     def delete(self, request: Any, review_id: int) -> Response:
         """

@@ -5,6 +5,7 @@ from rest_framework.views import APIView, Response, status
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from utils.constats import TimeIntervals
 from books.models.catalog import Author
@@ -31,7 +32,30 @@ class AuthorListViews(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of all authors.",
-        responses={status.HTTP_200_OK: AuthorSerializer(many=True)}
+        operation_summary="List all authors",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="A list of authors",
+                schema=AuthorSerializer(many=True),
+                examples={
+                    "application/json": [
+                        {
+                            "id": 1,
+                            "name": "Author Name",
+                            "slug": "author-name",
+                            "bio": "Author biography here"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Another Author",
+                            "slug": "another-author",
+                            "bio": "Another author biography here"
+                        }
+                    ]
+                }
+            )
+        },
+        tags=["Authors"]
     )
     def get(self, request) -> Response:
         """
@@ -63,7 +87,38 @@ class AuthorDetailViews(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve details of an author by ID or slug.",
-        responses={status.HTTP_200_OK: AuthorSerializer()}
+        operation_summary="Retrieve author details",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Details of the requested author",
+                schema=AuthorSerializer(),
+                examples={
+                    "application/json": {
+                        "id": 1,
+                        "name": "Author Name",
+                        "slug": "author-name",
+                        "bio": "Author biography here"
+                    }
+                }
+            ),
+            status.HTTP_404_NOT_FOUND: openapi.Response(
+                description="Author not found",
+                examples={
+                    "application/json": {
+                        "detail": "Not found."
+                    }
+                }
+            )
+        },
+        parameters=[
+            openapi.Parameter(
+                "identifier", 
+                openapi.IN_PATH, 
+                description="The ID or slug of the author",
+                type=openapi.TYPE_STRING
+            )
+        ],
+        tags=["Authors"]  
     )
     def get(self, request, identifier: str) -> Response:
         """

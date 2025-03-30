@@ -1,9 +1,10 @@
+import logging
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
-import logging
+from drf_yasg import openapi
 
 from payments.models import Payment
 from payments.serializers import PaymentSerializer
@@ -22,8 +23,30 @@ class PaymentListCreateAPIView(APIView):
     API View to retrieve all payments and create a new payment.
     """
     @swagger_auto_schema(
-        responses={status.HTTP_200_OK: PaymentSerializer(many=True)},
-        operation_description="Retrieve a list of all payments."
+        operation_summary="List all payments",
+        operation_description="Retrieve a list of all payments.",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="List of payments",
+                examples={
+                    "application/json": [
+                        {
+                            "id": 1,
+                            "amount": 100.00,
+                            "status": "Completed",
+                            "created_at": "2024-03-30T12:00:00Z"
+                        },
+                        {
+                            "id": 2,
+                            "amount": 50.00,
+                            "status": "Pending",
+                            "created_at": "2024-03-30T14:00:00Z"
+                        }
+                    ]
+                }
+            )
+        },
+        tags=["Payments"]
     )
     def get(self, request):
         """
@@ -34,9 +57,24 @@ class PaymentListCreateAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
+        operation_summary="Create a new payment",
+        operation_description="Create a new payment record.",
         request_body=PaymentSerializer,
-        responses={status.HTTP_201_CREATED: PaymentSerializer},
-        operation_description="Create a new payment record."
+        responses={
+            status.HTTP_201_CREATED: openapi.Response(
+                description="Payment created successfully",
+                examples={
+                    "application/json": {
+                        "id": 3,
+                        "amount": 200.00,
+                        "status": "Pending",
+                        "created_at": "2024-03-30T15:00:00Z"
+                    }
+                }
+            ),
+            status.HTTP_400_BAD_REQUEST: "Bad request: Validation error"
+        },
+        tags=["Payments"]
     )
     def post(self, request):
         """
@@ -67,8 +105,23 @@ class PaymentDetailAPIView(APIView):
             return None
 
     @swagger_auto_schema(
-        responses={status.HTTP_200_OK: PaymentSerializer},
-        operation_description="Retrieve details of a specific payment."
+        operation_summary="Retrieve payment details",
+        operation_description="Retrieve details of a specific payment.",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Payment details",
+                examples={
+                    "application/json": {
+                        "id": 1,
+                        "amount": 100.00,
+                        "status": "Completed",
+                        "created_at": "2024-03-30T12:00:00Z"
+                    }
+                }
+            ),
+            status.HTTP_404_NOT_FOUND: "Payment not found"
+        },
+        tags=["Payments"]
     )
     def get(self, request, payment_id):
         """
@@ -84,8 +137,14 @@ class PaymentDetailAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        responses={status.HTTP_204_NO_CONTENT: "No Content"},
-        operation_description="Delete a specific payment if it is pending."
+        operation_summary="Delete a payment",
+        operation_description="Delete a specific payment if it is pending.",
+        responses={
+            status.HTTP_204_NO_CONTENT: "Payment deleted successfully",
+            status.HTTP_400_BAD_REQUEST: "Only pending payments can be deleted",
+            status.HTTP_404_NOT_FOUND: "Payment not found"
+        },
+        tags=["Payments"]
     )
     def delete(self, request, payment_id):
         """

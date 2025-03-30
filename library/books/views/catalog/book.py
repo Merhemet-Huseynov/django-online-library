@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.request import Request
 from django.db import transaction
+from drf_yasg import openapi
 
 from books.models.review import UserBookView, BookRecommendation
 from books.serializers.catalog import BookSerializer
@@ -25,8 +26,10 @@ class BookListView(APIView):
     permission_classes = [AllowAny]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a list of all books.",
-        responses={status.HTTP_200_OK: BookSerializer(many=True)}
+        operation_description="Retrieve a list of all books. This endpoint returns basic information for each book such as title, author, and publication date.",
+        operation_summary="List of Books",
+        responses={status.HTTP_200_OK: BookSerializer(many=True)},
+        tags=["Books"]
     )
     def get(self, request: Request, *args, **kwargs) -> Response:
         """
@@ -52,8 +55,19 @@ class BookDetailView(APIView):
     permission_classes = [AllowAny]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a book by ID or slug.",
-        responses={status.HTTP_200_OK: BookSerializer()}
+        operation_description="Retrieve detailed information of a specific book by its ID or slug. This includes the title, author, publication date, and other relevant details.",
+        operation_summary="Book Details",
+        responses={status.HTTP_200_OK: BookSerializer()},
+        tags=["Books"],  
+        manual_parameters=[
+            openapi.Parameter(
+                "identifier", 
+                openapi.IN_PATH, 
+                description="Book ID or slug", 
+                type=openapi.TYPE_STRING, 
+                required=True
+            )
+        ]
     )
     def get(self, request, identifier: str, *args, **kwargs):
         """

@@ -34,7 +34,11 @@ class CategoryListViews(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of all categories.",
-        responses={status.HTTP_200_OK: CategorySerializer(many=True)}
+        operation_summary="Get All Categories",
+        responses={
+            status.HTTP_200_OK: CategorySerializer(many=True)
+        },
+        tags=["Categories"]
     )
     def get(self, request, *args, **kwargs) -> Response:
         """
@@ -65,7 +69,9 @@ class CategoryDetailViews(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a single category by ID or slug.",
-        responses={status.HTTP_200_OK: CategorySerializer()}
+        operation_summary="Get Single Category",
+        responses={status.HTTP_200_OK: CategorySerializer()},
+        tags=["Categories"]
     )
     def get(self, request, identifier: str, *args, **kwargs) -> Response:
         """
@@ -112,10 +118,12 @@ class SubCategoryListView(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve subcategories of a given super category.",
+        operation_summary="Get Subcategories of Super Category",
         responses={
             status.HTTP_200_OK: SubCategorySerializer(many=True),
-            status.HTTP_400_BAD_REQUEST: openapi.Response("Invalid input")
-        }
+            status.HTTP_400_BAD_REQUEST: openapi.Response("Invalid input"),
+        },
+        tags=["Categories"]
     )
     def get(self, request, identifier: str, *args, **kwargs) -> Response:
         """

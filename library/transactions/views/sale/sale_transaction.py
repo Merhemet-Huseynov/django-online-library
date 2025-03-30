@@ -28,12 +28,31 @@ class SaleTransactionDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Fetches only the sale transaction of the authenticated user by the provided pk.",
+        operation_summary="Retrieve Sale Transaction Detail",
+        operation_description=(
+            "Fetches the sale transaction details for the authenticated user using the provided transaction ID (pk). "
+            "If the transaction is not associated with the authenticated user, a 403 error is returned. "
+            "If the transaction does not exist, a 404 error is returned."
+        ),
         responses={
-            200: SaleTransactionSerializer,
-            403: "You do not have permission to view this transaction.",
-            404: "Sale transaction not found."
-        }
+            200: openapi.Response(
+                description="Sale transaction details retrieved successfully.",
+                schema=SaleTransactionSerializer()
+            ),
+            403: openapi.Response(
+                description="Unauthorized access attempt. The authenticated user does not have permission to view this transaction.",
+                examples={
+                    "application/json": {"detail": "You do not have permission to view this transaction."}
+                }
+            ),
+            404: openapi.Response(
+                description="Sale transaction not found.",
+                examples={
+                    "application/json": {"detail": "Not found."}
+                }
+            ),
+        },
+        tags=["Sale Transactions"]
     )
     def get(self, request, pk, *args, **kwargs):
         """
@@ -61,12 +80,32 @@ class SaleTransactionListView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Lists the sale transactions of the authenticated user only.",
+        operation_summary="List Sale Transactions",
+        operation_description=(
+            "Lists all sale transactions associated with the authenticated user. "
+            "An optional query parameter 'user' can be provided to specify the username, "
+            "but it must match the authenticated user, otherwise a 403 error is returned. "
+            "If no transactions are found, a 404 error is returned."
+        ),
         responses={
-            200: SaleTransactionSerializer(many=True),
-            403: "You do not have permission to view this user's transactions.",
-            404: "No sale transactions found."
-        }
+            200: openapi.Response(
+                description="List of sale transactions retrieved successfully.",
+                schema=SaleTransactionSerializer(many=True)
+            ),
+            403: openapi.Response(
+                description="Unauthorized access attempt. The specified user does not match the authenticated user.",
+                examples={
+                    "application/json": {"detail": "You do not have permission to view this user's transactions."}
+                }
+            ),
+            404: openapi.Response(
+                description="No sale transactions found for the authenticated user.",
+                examples={
+                    "application/json": {"detail": "No sale transactions found."}
+                }
+            ),
+        },
+        tags=["Sale Transactions"]
     )
     def get(self, request, *args, **kwargs):
         """

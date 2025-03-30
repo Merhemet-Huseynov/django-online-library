@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404 
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from books.models.review import BookRecommendation
 from books.serializers.review import BookRecommendationSerializer
@@ -27,8 +28,34 @@ class BookRecommendationListView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Retrieve book recommendations for the authenticated user",
-        responses={200: BookRecommendationSerializer(many=True)}
+        operation_description="Retrieve a list of book recommendations for the authenticated user.",
+        operation_summary="Get Book Recommendations",
+        responses={
+            200: openapi.Response(
+                description="Successfully retrieved the list of recommendations",
+                schema=BookRecommendationSerializer(many=True),
+                examples={
+                    "application/json": [
+                        {
+                            "id": 1,
+                            "book_title": "Book Title 1",
+                            "author": "Author 1",
+                            "recommendation_date": "2025-03-30",
+                            "rating": 4.5
+                        },
+                        {
+                            "id": 2,
+                            "book_title": "Book Title 2",
+                            "author": "Author 2",
+                            "recommendation_date": "2025-03-29",
+                            "rating": 5.0
+                        }
+                    ]
+                }
+            ),
+            401: "Unauthorized, please provide a valid authentication token"
+        },
+        tags=["Book Recommendation"]
     )
     def get(self, request):
         """
@@ -56,8 +83,26 @@ class BookRecommendationDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a specific book recommendation for the authenticated user",
-        responses={200: BookRecommendationSerializer, 404: "Recommendation not found"}
+        operation_description="Retrieve a specific book recommendation by its ID for the authenticated user.",
+        operation_summary="Get Book Recommendation by ID",
+        responses={
+            200: openapi.Response(
+                description="Successfully retrieved the book recommendation",
+                schema=BookRecommendationSerializer,
+                examples={
+                    "application/json": {
+                        "id": 1,
+                        "book_title": "Book Title 1",
+                        "author": "Author 1",
+                        "recommendation_date": "2025-03-30",
+                        "rating": 4.5
+                    }
+                }
+            ),
+            404: "Recommendation not found or does not belong to the authenticated user.",
+            401: "Unauthorized, please provide a valid authentication token"
+        },
+        tags=["Book Recommendation"]
     )
     def get(self, request, pk):
         """
