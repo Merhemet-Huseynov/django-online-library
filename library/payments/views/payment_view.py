@@ -2,17 +2,12 @@ import logging
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from payments.models import Payment
-from payments.serializers import PaymentSerializer
-
-__all__ = [
-    "PaymentListCreateAPIView",
-    "PaymentDetailAPIView"
-]
+from payments.serializers import PaymentSerializer, PaymentCreateSerializer
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -20,27 +15,29 @@ logger = logging.getLogger(__name__)
 
 class PaymentListCreateAPIView(APIView):
     """
-    API View to retrieve all payments and create a new payment.
+    API view for retrieving a user's payments and creating a new payment.
     """
+    permission_classes = [IsAuthenticated] 
+
     @swagger_auto_schema(
-        operation_summary="List all payments",
-        operation_description="Retrieve a list of all payments.",
+        operation_summary="List user payments",
+        operation_description="Retrieve a list of payments belonging to the authenticated user.",
         responses={
             status.HTTP_200_OK: openapi.Response(
-                description="List of payments",
+                description="List of user payments",
                 examples={
                     "application/json": [
                         {
                             "id": 1,
                             "amount": 100.00,
                             "status": "Completed",
-                            "created_at": "2024-03-30T12:00:00Z"
+                            "payment_date": "2024-03-30T12:00:00Z"
                         },
                         {
                             "id": 2,
                             "amount": 50.00,
                             "status": "Pending",
-                            "created_at": "2024-03-30T14:00:00Z"
+                            "payment_date": "2024-03-30T14:00:00Z"
                         }
                     ]
                 }
@@ -50,16 +47,16 @@ class PaymentListCreateAPIView(APIView):
     )
     def get(self, request):
         """
-        List all payments in the system.
+        Retrieve only the authenticated user's payments.
         """
-        payments = Payment.objects.all()
+        payments = Payment.objects.filter(user=request.user)
         serializer = PaymentSerializer(payments, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(
         operation_summary="Create a new payment",
-        operation_description="Create a new payment record.",
-        request_body=PaymentSerializer,
+        operation_description="Create a new payment record for the authenticated user.",
+        request_body=PaymentCreateSerializer,
         responses={
             status.HTTP_201_CREATED: openapi.Response(
                 description="Payment created successfully",
@@ -68,7 +65,7 @@ class PaymentListCreateAPIView(APIView):
                         "id": 3,
                         "amount": 200.00,
                         "status": "Pending",
-                        "created_at": "2024-03-30T15:00:00Z"
+                        "payment_date": "2024-03-30T15:00:00Z"
                     }
                 }
             ),
@@ -80,33 +77,38 @@ class PaymentListCreateAPIView(APIView):
         """
         Create a new payment.
         """
-        serializer = PaymentSerializer(data=request.data)
+        serializer = PaymentCreateSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            # Save payment and log the creation
-            serializer.save()
-            logger.info(f"Payment created successfully: {serializer.data}")
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        logger.error(f"Payment creation failed: {serializer.errors}")
+            try:
+                payment = serializer.save(user=request.user)
+                logger.info(f"Payment created successfully: {payment}")
+                return Response(PaymentSerializer(payment).data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                logger.error(f"Payment creation failed: {str(e)}")
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.error(f"Payment validation failed: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaymentDetailAPIView(APIView):
     """
-    API View to retrieve, update, or delete a payment.
+    API view for retrieving, updating, or deleting a user's specific payment.
     """
+    permission_classes = [IsAuthenticated]  
 
-    def get_object(self, payment_id):
+    def get_object(self, user, payment_id):
         """
-        Helper function to get a payment object by its ID.
+        Helper function to retrieve a payment belonging to the authenticated user.
         """
         try:
-            return Payment.objects.get(id=payment_id)
+            return Payment.objects.get(id=payment_id, user=user) 
         except Payment.DoesNotExist:
             return None
 
     @swagger_auto_schema(
-        operation_summary="Retrieve payment details",
-        operation_description="Retrieve details of a specific payment.",
+        operation_summary="Retrieve user payment details",
+        operation_description="Retrieve details of a specific payment belonging to the authenticated user.",
         responses={
             status.HTTP_200_OK: openapi.Response(
                 description="Payment details",
@@ -115,7 +117,7 @@ class PaymentDetailAPIView(APIView):
                         "id": 1,
                         "amount": 100.00,
                         "status": "Completed",
-                        "created_at": "2024-03-30T12:00:00Z"
+                        "payment_date": "2024-03-30T12:00:00Z"
                     }
                 }
             ),
@@ -125,9 +127,9 @@ class PaymentDetailAPIView(APIView):
     )
     def get(self, request, payment_id):
         """
-        Retrieve a specific payment by its ID.
+        Retrieve details of a specific payment belonging to the authenticated user.
         """
-        payment = self.get_object(payment_id)
+        payment = self.get_object(request.user, payment_id)
         if payment is None:
             return Response(
                 {"detail": "Payment not found."}, 
@@ -137,8 +139,8 @@ class PaymentDetailAPIView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_summary="Delete a payment",
-        operation_description="Delete a specific payment if it is pending.",
+        operation_summary="Delete a user payment",
+        operation_description="Delete a specific payment if it belongs to the authenticated user and is pending.",
         responses={
             status.HTTP_204_NO_CONTENT: "Payment deleted successfully",
             status.HTTP_400_BAD_REQUEST: "Only pending payments can be deleted",
@@ -148,9 +150,9 @@ class PaymentDetailAPIView(APIView):
     )
     def delete(self, request, payment_id):
         """
-        Delete a specific payment if it is pending.
+        Delete a specific payment if it belongs to the authenticated user and is still pending.
         """
-        payment = self.get_object(payment_id)
+        payment = self.get_object(request.user, payment_id)
         if payment is None:
             return Response(
                 {"detail": "Payment not found."}, 
@@ -163,6 +165,6 @@ class PaymentDetailAPIView(APIView):
             )
         
         # Log payment deletion
-        logger.info(f"Payment with ID {payment_id} is being deleted.")
+        logger.info(f"User {request.user.id} deleted payment {payment_id}.")
         payment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

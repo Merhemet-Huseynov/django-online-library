@@ -1,8 +1,13 @@
-from django.contrib.auth.models import User
-from django.utils.timezone import now
-from datetime import timedelta
 from django.db import models
+from datetime import timedelta
+from django.contrib.auth import get_user_model
+from django.utils.timezone import now
+from django.apps import apps
+
 from books.models.catalog import Book
+from payments.models.payment import Payment
+
+User = get_user_model()
 
 
 class RentalSchedule(models.Model):
@@ -33,7 +38,9 @@ class RentalSchedule(models.Model):
         auto_now_add=True
     )
     rental_end_date = models.DateField(
-        editable=False
+        editable=False,
+        blank=True,
+        null=True
     )
     rental_duration = models.CharField(
         max_length=10, 
@@ -56,69 +63,64 @@ class RentalSchedule(models.Model):
         default="pending"
     )
 
-    def save(self, *args, **kwargs):
+    def rent_book(self):
         """
-        Automatically sets rental_end_date, rental_price, 
-        checks book availability.
+        This method handles the process of renting a book. It ensures that the book is available, 
+        sets the rental price based on the rental duration, processes the payment, 
+        and updates the rental schedule.
+
+        Steps:
+        1. Check if the book is available for rent.
+        2. Ensure the rental price is set by fetching it from the RentalPrice model.
+        3. Process the payment for the rental.
+        4. Update the rental status and book availability upon successful payment.
+        5. Set the rental end date based on the selected rental duration.
+        
+        :return: A success message indicating the rental was processed successfully.
+        :raises ValueError: If the book is unavailable or the rental price is not set.
         """
-        if not self.pk and self.book.available_count <= 0:  
-            raise ValueError(
-                "The book is out of stock and cannot be rented."
-            )
-        
-        if not self.pk: 
-            self.book.available_count -= 1
-            self.book.save()
-        
-       # Notify waiting users if the book is no longer available
+        # Circular import problem workaround for RentalPrice model
+        RentalPrice = apps.get_model('transactions', 'RentalPrice')
+
+        # Check if the book is available for rent
         if self.book.available_count <= 0:
-            users_waiting_for_book = RentalSchedule.objects.filter(
-                book=self.book, status="pending"
-            )
-            for user_rental in users_waiting_for_book:
-                OverdueNotification.objects.create(
-                    user=user_rental.user,
-                    book=self.book,
-                    next_reminder_date=now().date() + timedelta(days=1) 
-                )
+            raise ValueError("The book is currently not available for rent.")
         
-        super().save(*args, **kwargs)
+        # Ensure rental price is set
+        if not self.rental_price:
+            # Get rental price from the RentalPrice model
+            rental_price_obj = RentalPrice.objects.filter(book=self.book).first()
+            if rental_price_obj:
+                self.rental_price = rental_price_obj.price
+            else:
+                raise ValueError("The rental price for the book is not set.")
 
-    def return_book(self):
-        """Method to return the book and update the available count, including overdue fine calculation."""
-        if self.returned:
-            raise ValueError("The book has already been returned.")
+        # Process payment
+        payment = Payment.objects.create(
+            user=self.user,
+            book=self.book,
+            amount=self.rental_price,
+            status=Payment.PENDING,
+            payment_method=Payment.BALANCE, 
+        )
+        
+        # Update payment status after payment is processed (assuming success here)
+        payment.status = Payment.COMPLETED
+        payment.save()
 
-        self.returned = True
-        self.book.available_count += 1
+        # Confirm the rental and update book availability
+        self.status = "active"
+        self.book.available_count -= 1
         self.book.save()
 
-        # Overdue calculation
-        today = now().date()
-        overdue_days = max((today - self.rental_end_date).days, 0)
-
-        fine_amount = 0
-        if overdue_days > 0:
-            fine_amount = overdue_days * 1  
-
-            OverdueFine.objects.create(
-                rental=self,
-                overdue_days=overdue_days,
-                fine_amount=fine_amount
-            )
+        # Set the rental end date based on the duration
+        if self.rental_duration == "3_days":
+            self.rental_end_date = self.rental_start_date + timedelta(days=3)
+        elif self.rental_duration == "1_week":
+            self.rental_end_date = self.rental_start_date + timedelta(weeks=1)
+        elif self.rental_duration == "1_month":
+            self.rental_end_date = self.rental_start_date + timedelta(weeks=4)
 
         self.save()
 
-        # Only create RentalHistory when the book is actually returned and not already created
-        if self.status == "returned" and not RentalHistory.objects.filter(
-            user=self.user, book=self.book, rental_start_date=self.rental_start_date
-        ).exists():
-        
-            RentalHistory.objects.create(
-                user=self.user,
-                book=self.book,
-                rental_start_date=self.rental_start_date,
-                rental_end_date=self.rental_end_date,
-                rental_duration=self.rental_duration,
-                rental_price=self.rental_price
-            )
+        return f"Book \"{self.book.title}\" rented successfully. Rental period: {self.rental_start_date} ➝ {self.rental_end_date}"
