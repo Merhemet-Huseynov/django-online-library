@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from reservations.models.event import EventSchedule
+from event_manager.models.event import EventSchedule
 
 
 class EventScheduleSerializer(serializers.ModelSerializer):

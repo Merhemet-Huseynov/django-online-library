@@ -1,6 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from accounts.serializers.verification import SendVerificationCodeSerializer
 from accounts.models.verification import DailyMessage
@@ -21,7 +22,38 @@ class SendVerificationCodeView(APIView):
     message sending constraints.
     """
 
-    @swagger_auto_schema(request_body=SendVerificationCodeSerializer)
+    @swagger_auto_schema(
+        operation_summary="Send Verification Code",
+        operation_description="Sends a verification code to the provided email address. The system checks if the email has exceeded the daily sending limit, and if not, sends the verification code via email.",
+        request_body=SendVerificationCodeSerializer,
+        responses={
+            200: openapi.Response(
+                description="Verification code sent successfully.",
+                examples={
+                    "application/json": {
+                        "message": "Verification code sent."
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request due to invalid input data.",
+                examples={
+                    "application/json": {
+                        "email": ["This field is required."]
+                    }
+                }
+            ),
+            429: openapi.Response(
+                description="Too many requests sent to this email address within a day.",
+                examples={
+                    "application/json": {
+                        "error": "Too many requests for email: user@example.com. Try again later."
+                    }
+                }
+            )
+        },
+        tags=["UserRegister"] 
+    )
     def post(self, request) -> Response:
         """
         Handle POST request to send a verification code to the provided email address.

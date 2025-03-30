@@ -1,6 +1,6 @@
 import pytest
-from reservations.models.event import EventSchedule
-from reservations.serializers.event import EventScheduleSerializer
+from event_manager.models.event import EventSchedule
+from event_manager.serializers.event import EventScheduleSerializer
 
 
 @pytest.mark.django_db

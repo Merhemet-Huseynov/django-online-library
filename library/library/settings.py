@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     
     # Apps 
     "notifications",
-    "reservations",
+    "event_manager",
     "transactions",
     "accounts",
     "payments",

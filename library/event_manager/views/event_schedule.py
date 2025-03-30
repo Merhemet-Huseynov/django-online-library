@@ -5,8 +5,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 
-from reservations.models.event import EventSchedule
-from reservations.serializers.event import EventScheduleSerializer
+from event_manager.models.event import EventSchedule
+from event_manager.serializers.event import EventScheduleSerializer
 
 __all__ = [
     "EventScheduleListAPIView",

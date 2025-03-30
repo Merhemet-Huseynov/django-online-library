@@ -1,7 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
-
+from drf_yasg import openapi
 from accounts.serializers.auth import LoginSerializer
 
 __all__ = ["LoginView"]
@@ -17,7 +17,33 @@ class LoginView(APIView):
     It uses a `LoginSerializer` to validate the provided data and return appropriate responses.
     """
 
-    @swagger_auto_schema(request_body=LoginSerializer)
+    @swagger_auto_schema(
+        operation_description="Log in a user by providing their credentials.",
+        operation_summary="User Login",
+        request_body=LoginSerializer,
+        responses={
+            200: openapi.Response(
+                description="Login successful, returns user data or auth token",
+                examples={
+                    "application/json": {
+                        "user_id": 1,
+                        "username": "example_user",
+                        "token": "abcdef123456"
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request, invalid login credentials",
+                examples={
+                    "application/json": {
+                        "email": ["This field is required."],
+                        "password": ["This field is required."]
+                    }
+                }
+            ),
+        },
+        tags=["Authentication"]  
+    )
     def post(self, request) -> Response:
         """
         Handles the POST request to log in a user.

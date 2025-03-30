@@ -3,7 +3,6 @@ from ..models import (
     PurchaseHistory,
     RentalHistory,
     OverdueFine,
-    RentalPrice,
     RentalSchedule,
 )
 
@@ -11,5 +10,4 @@ from ..models import (
 admin.site.register(PurchaseHistory)
 admin.site.register(RentalHistory)
 admin.site.register(OverdueFine)
-admin.site.register(RentalPrice)
 admin.site.register(RentalSchedule)

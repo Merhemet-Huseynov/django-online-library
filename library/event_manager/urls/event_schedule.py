@@ -1,5 +1,5 @@
 from django.urls import path, include
-from reservations.views import *
+from event_manager.views import *
 
 urlpatterns = [
     path(

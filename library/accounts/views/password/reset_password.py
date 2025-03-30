@@ -1,6 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from accounts.serializers.password import ResetPasswordSerializer
 
@@ -19,7 +20,31 @@ class ResetPasswordView(APIView):
     the validation errors.
     """
     
-    @swagger_auto_schema(request_body=ResetPasswordSerializer)
+    @swagger_auto_schema(
+        operation_description="Request to reset the password by providing a new password.",
+        operation_summary="Password Reset",
+        request_body=ResetPasswordSerializer,
+        responses={
+            200: openapi.Response(
+                description="Password reset successful",
+                examples={
+                    "application/json": {
+                        "message": "Password reset successful."
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request, validation errors for the password reset",
+                examples={
+                    "application/json": {
+                        "new_password": ["This field is required."],
+                        "confirm_password": ["This field is required."]
+                    }
+                }
+            ),
+        },
+        tags=["Password Management"] 
+    )
     def post(self, request) -> Response:
         """
         Handle the POST request to reset the password.

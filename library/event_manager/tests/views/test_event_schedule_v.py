@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 from django.urls import reverse
-from reservations.models.event import EventSchedule
+from event_manager.models.event import EventSchedule
 from django.utils import timezone
 
 
@@ -31,7 +31,7 @@ def test_event_schedule_list_view(client):
     )
     
     # Define the URL for the event list API endpoint
-    url = reverse('event-list')
+    url = reverse("event-list")
     
     # Make the GET request to the API
     response = client.get(url)
@@ -40,9 +40,9 @@ def test_event_schedule_list_view(client):
     assert response.status_code == status.HTTP_200_OK
     
     # Check if the response contains the serialized data of both events
-    assert len(response.data) == 2  # Two events should be returned
-    assert response.data[0]['name'] == event1.name
-    assert response.data[1]['name'] == event2.name
+    assert len(response.data) == 2  
+    assert response.data[0]["name"] == event1.name
+    assert response.data[1]["name"] == event2.name
 
 
 @pytest.mark.django_db
@@ -63,7 +63,7 @@ def test_event_schedule_detail_view(client):
     )
     
     # Define the URL for the event detail API endpoint
-    url = reverse('event-detail', kwargs={'event_id': event.id})
+    url = reverse("event-detail", kwargs={"event_id": event.id})
     
     # Make the GET request to the API
     response = client.get(url)
@@ -72,9 +72,9 @@ def test_event_schedule_detail_view(client):
     assert response.status_code == status.HTTP_200_OK
     
     # Check if the response contains the serialized data of the event
-    assert response.data['name'] == event.name
-    assert response.data['location'] == event.location
-    assert response.data['description'] == event.description
+    assert response.data["name"] == event.name
+    assert response.data["location"] == event.location
+    assert response.data["description"] == event.description
 
 
 @pytest.mark.django_db
@@ -86,7 +86,7 @@ def test_event_schedule_detail_view_not_found(client):
     non_existing_event_id = 999
     
     # Define the URL for the event detail API endpoint
-    url = reverse('event-detail', kwargs={'event_id': non_existing_event_id})
+    url = reverse("event-detail", kwargs={"event_id": non_existing_event_id})
     
     # Make the GET request to the API
     response = client.get(url)

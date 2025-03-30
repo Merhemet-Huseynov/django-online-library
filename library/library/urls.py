@@ -94,7 +94,7 @@ urlpatterns = [
     ),
     path(
         "api/v1/", 
-        include("reservations.urls")
+        include("event_manager.urls")
     ),
     path(
         "api/v1/", 

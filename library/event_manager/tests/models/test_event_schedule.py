@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from reservations.models.event import EventSchedule
+from event_manager.models.event import EventSchedule
 
 
 @pytest.mark.django_db

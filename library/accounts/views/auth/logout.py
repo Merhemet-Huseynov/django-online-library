@@ -3,6 +3,7 @@ from rest_framework.views import APIView, Response, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from accounts.serializers.auth import LogoutSerializer
 
@@ -21,7 +22,39 @@ class LogoutView(APIView):
         post: Logs the user out by blacklisting the provided refresh token.
     """
 
-    @swagger_auto_schema(request_body=LogoutSerializer)
+    @swagger_auto_schema(
+        operation_summary="User Logout",
+        operation_description="Logs out the user by blacklisting the provided refresh token. "
+                              "The refresh token is required for the logout operation.",
+        request_body=LogoutSerializer,
+        responses={
+            200: openapi.Response(
+                description="Successfully logged out, token blacklisted",
+                examples={
+                    "application/json": {
+                        "detail": "Successfully logged out."
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request, invalid or missing refresh token",
+                examples={
+                    "application/json": {
+                        "detail": "Refresh token is required."
+                    }
+                }
+            ),
+            401: openapi.Response(
+                description="Invalid token, the provided refresh token could not be blacklisted",
+                examples={
+                    "application/json": {
+                        "detail": "Invalid token."
+                    }
+                }
+            ),
+        },
+        tags=["Authentication"]  
+    )
     def post(self, request) -> Response:
         """
         Handles the POST request to log the user out by blacklisting the refresh token.

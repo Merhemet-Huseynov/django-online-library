@@ -2,6 +2,7 @@ import logging
 from rest_framework.views import APIView, Response, status
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from accounts.serializers.password import ChangePasswordSerializer
 
@@ -21,7 +22,39 @@ class ChangePasswordView(APIView):
     """
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(request_body=ChangePasswordSerializer)
+    @swagger_auto_schema(
+        operation_description="Allow the authenticated user to change their password.",
+        operation_summary="Change User Password",
+        request_body=ChangePasswordSerializer,
+        responses={
+            200: openapi.Response(
+                description="Password successfully changed",
+                examples={
+                    "application/json": {
+                        "message": "Password changed successfully."
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request due to invalid input or errors",
+                examples={
+                    "application/json": {
+                        "current_password": ["This field is required."],
+                        "new_password": ["This field is required."]
+                    }
+                }
+            ),
+            401: openapi.Response(
+                description="Unauthorized access - user is not authenticated",
+                examples={
+                    "application/json": {
+                        "detail": "Authentication credentials were not provided."
+                    }
+                }
+            ),
+        },
+        tags=["Password Management"]
+    )
     def post(self, request) -> Response:
         """
         Handles the password change request for the authenticated user. If the 

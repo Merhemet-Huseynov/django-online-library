@@ -1,1 +1,0 @@
-from .reservation_schedule import ReservationScheduleSerializer

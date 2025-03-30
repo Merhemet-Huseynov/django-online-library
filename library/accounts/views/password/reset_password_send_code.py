@@ -1,6 +1,7 @@
 import logging
 from rest_framework.views import APIView, Response, status
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from accounts.serializers.password import ResetPasswordSendCodeSerializer
 
@@ -14,7 +15,31 @@ class ResetPasswordSendCodeView(APIView):
     View to handle password reset requests by sending a reset code to the user's email.
     """
 
-    @swagger_auto_schema(request_body=ResetPasswordSendCodeSerializer)
+    @swagger_auto_schema(
+        operation_description="Request a password reset by providing the user's email.",
+        operation_summary="Password Reset Request",
+        request_body=ResetPasswordSendCodeSerializer,
+        responses={
+            200: openapi.Response(
+                description="Password reset code sent successfully.",
+                examples={
+                    "application/json": {
+                        "message": "Password reset code sent successfully to the email.",
+                        "email": "user@example.com"
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Bad request due to invalid email or missing data.",
+                examples={
+                    "application/json": {
+                        "email": ["This field is required."]
+                    }
+                }
+            ),
+        },
+        tags=["Password Management"]
+    )
     def post(self, request) -> Response:
         """
         Handle POST request to send a password reset code to the provided email.

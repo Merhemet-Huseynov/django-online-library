@@ -1,2 +1,0 @@
-from .reservation import ReservationScheduleSerializer
-from .event import EventScheduleSerializer
