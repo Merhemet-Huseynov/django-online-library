@@ -38,7 +38,6 @@ class RentalSchedule(models.Model):
         auto_now_add=True
     )
     rental_end_date = models.DateField(
-        editable=False,
         blank=True,
         null=True
     )
@@ -65,30 +64,23 @@ class RentalSchedule(models.Model):
 
     def rent_book(self):
         """
-        This method handles the process of renting a book. It ensures that the book is available, 
-        sets the rental price based on the rental duration, processes the payment, 
-        and updates the rental schedule.
+        Process the book rental, ensuring availability and handling payments.
 
         Steps:
-        1. Check if the book is available for rent.
-        2. Ensure the rental price is set by fetching it from the RentalPrice model.
-        3. Process the payment for the rental.
-        4. Update the rental status and book availability upon successful payment.
-        5. Set the rental end date based on the selected rental duration.
-        
-        :return: A success message indicating the rental was processed successfully.
-        :raises ValueError: If the book is unavailable or the rental price is not set.
+        1. Check book availability.
+        2. Set the rental price.
+        3. Process the payment.
+        4. Update book availability and rental status.
+        5. Calculate the rental end date.
         """
-        # Circular import problem workaround for RentalPrice model
         RentalPrice = apps.get_model('transactions', 'RentalPrice')
 
-        # Check if the book is available for rent
+        # Check if the book is available
         if self.book.available_count <= 0:
             raise ValueError("The book is currently not available for rent.")
         
         # Ensure rental price is set
         if not self.rental_price:
-            # Get rental price from the RentalPrice model
             rental_price_obj = RentalPrice.objects.filter(book=self.book).first()
             if rental_price_obj:
                 self.rental_price = rental_price_obj.price
@@ -104,16 +96,20 @@ class RentalSchedule(models.Model):
             payment_method=Payment.BALANCE, 
         )
         
-        # Update payment status after payment is processed (assuming success here)
+        # Simulate payment completion
         payment.status = Payment.COMPLETED
         payment.save()
 
-        # Confirm the rental and update book availability
+        # Ensure payment was successful before proceeding
+        if payment.status != Payment.COMPLETED:
+            raise ValueError("Payment failed. Rental cannot be processed.")
+
+        # Update rental status and book availability
         self.status = "active"
         self.book.available_count -= 1
         self.book.save()
 
-        # Set the rental end date based on the duration
+        # Set rental end date
         if self.rental_duration == "3_days":
             self.rental_end_date = self.rental_start_date + timedelta(days=3)
         elif self.rental_duration == "1_week":
