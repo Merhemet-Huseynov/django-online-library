@@ -6,21 +6,22 @@ from transactions.models.history import RentalHistory
 
 
 class RentalHistorySerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all()
-    )
-    book = serializers.PrimaryKeyRelatedField(
-        queryset=Book.objects.all()
-    )
+    """
+    Serializer for the RentalHistory model.
+    This serializer allows rental history data to be represented in JSON format.
+    """
+
+    user = serializers.StringRelatedField()  
+    book = serializers.StringRelatedField() 
 
     class Meta:
-        model = RentalHistory
+        model = RentalHistory  
         fields = [
-            "id", 
-            "user", 
-            "book", 
-            "rental_start_date", 
-            "rental_end_date", 
-            "rental_duration", 
-            "rental_price"
+            "id",                 
+            "user",               
+            "book",              
+            "rental_start_date",  
+            "rental_end_date",    
+            "rental_duration",    
+            "rental_price",       
         ]

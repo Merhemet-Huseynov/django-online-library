@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 
 
 class RentalHistory(models.Model):
+    """
+    Model to store users' book rental history.
+    """
+    
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE,
@@ -16,18 +20,21 @@ class RentalHistory(models.Model):
         related_name="rental_history"
     )
 
-    rental_start_date = models.DateField()
-    rental_end_date = models.DateField()
+    rental_start_date = models.DateField() 
+    rental_end_date = models.DateField()  
     rental_duration = models.CharField(
         max_length=10, 
-        choices=RentalSchedule.RENTAL_DURATIONS
+        choices=RentalSchedule.RENTAL_DURATIONS  
     )
     rental_price = models.DecimalField(
         max_digits=10, 
-        decimal_places=2
+        decimal_places=2 
     )
 
     def __str__(self):
+        """
+        String representation of the model instance.
+        """
         return (
             f"Rental Details:\n"
             f"📌 User: {self.user.username}\n"
@@ -36,22 +43,7 @@ class RentalHistory(models.Model):
         )
 
     def save(self, *args, **kwargs):
-        """Automatically creates RentalHistory after return."""
+        """
+        Performs additional checks before saving the rental history.
+        """
         super().save(*args, **kwargs)
-        
-        if self.status == "returned":
-            rental_history_exists = RentalHistory.objects.filter(
-                user=self.user, 
-                book=self.book, 
-                rental_start_date=self.rental_start_date
-            ).exists()
-            
-            if not rental_history_exists:
-                RentalHistory.objects.create(
-                    user=self.user,
-                    book=self.book,
-                    rental_start_date=self.rental_start_date,
-                    rental_end_date=self.rental_end_date,
-                    rental_duration=self.rental_duration,
-                    rental_price=self.rental_price
-                )

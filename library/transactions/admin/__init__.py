@@ -4,3 +4,4 @@ from .rental_price import RentalPriceAdmin
 from .rental_schedule import RentalScheduleAdmin
 from .overdue_fine import OverdueFineAdmin
 from .purchase_history import PurchaseHistoryAdmin
+from .rental_history import RentalHistoryAdmin
