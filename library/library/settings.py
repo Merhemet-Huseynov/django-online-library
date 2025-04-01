@@ -176,7 +176,7 @@ REST_FRAMEWORK = {
 
 # JWT Configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),  
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1), 
     "ROTATE_REFRESH_TOKENS": True,  
     "BLACKLIST_AFTER_ROTATION": True, 
@@ -218,19 +218,19 @@ CACHE_MIDDLEWARE_KEY_PREFIX = "django_cache"
 
 # Logging conf
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',  
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",  
+            "propagate": True,
         },
     },
 }
