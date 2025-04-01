@@ -1,22 +1,32 @@
-from django.contrib.auth.models import User
+from rest_framework import serializers
+from notifications.models import OverdueNotification
+from django.contrib.auth import get_user_model
 from books.models.catalog import Book
-from notifications.models.overdue_notification import OverdueNotification
+
+User = get_user_model()
 
 
 class OverdueNotificationSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
+    """
+    Serializer for OverdueNotification model.
+
+    This serializer handles the conversion between the OverdueNotification model 
+    instances and JSON data. It includes fields for user, book, and notification_sent_date.
+    """
+    user = serializers.SlugRelatedField(
+        slug_field="username", 
         queryset=User.objects.all()
     )
-    book = serializers.PrimaryKeyRelatedField(
+    book = serializers.SlugRelatedField(
+        slug_field="title", 
         queryset=Book.objects.all()
     )
 
     class Meta:
         model = OverdueNotification
         fields = [
-            "id", 
+            "id",
             "user", 
             "book", 
-            "notification_sent_date", 
-            "next_reminder_date"
+            "notification_sent_date"
         ]
