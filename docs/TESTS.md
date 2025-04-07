@@ -79,9 +79,6 @@ Performance tests evaluate the application’s response time and scalability und
   - Testing database query performance with large datasets to ensure queries are optimized.
 
 ---
-Here's the completed section with the requested content:
-
----
 
 ### Running Tests 🏃‍♂️
 
